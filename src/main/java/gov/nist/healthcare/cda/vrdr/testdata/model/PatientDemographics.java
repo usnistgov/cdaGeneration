@@ -81,7 +81,7 @@ public class PatientDemographics {
         
         
         AD ad = cda.getRecordTargetArray(0).addNewPatientRole().addNewAddr();
-        ad.setStateArray();
+        //ad.setStateArray();
         System.out.println(cdaRoot.xmlText(options));
     }
     
