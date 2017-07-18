@@ -26,7 +26,7 @@ import org.w3c.dom.Node;
 public class PatientDemographics {
     
     public static AD populateAD(AD ad, Address addr) {
-                
+      /*          
         Collection<String> streetAddresses = addr.getStreetAddress();
         Iterator<String> it = streetAddresses.iterator();
         while(it.hasNext()) {
@@ -37,6 +37,7 @@ public class PatientDemographics {
             AdxpState state = ad.addNewState();
             state.newCursor().setTextValue(addr.getState());
         }
+*/
         return ad;
     }
     
@@ -71,8 +72,8 @@ public class PatientDemographics {
         cdaRoot.setClinicalDocument(cda);
         //System.out.println(cdaRoot.xmlText(options));
         
-           Address addr = new Address();
-        addr.getStreetAddress().add("123 Main St.");
+        Address addr = new Address();
+        addr.setStreetAddress1("123 Main St.");
         addr.setState("MD");
         addr.setCounty("Montgomery");
         addr.setPostalCode("2000");

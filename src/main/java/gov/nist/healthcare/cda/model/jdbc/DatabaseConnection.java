@@ -21,6 +21,73 @@ import java.util.logging.Logger;
  */
 public class DatabaseConnection {
     
+    //TODO: Move this to a separate class?
+    
+    public static final String DATABASE_NAME = "VRDRTestData";
+    public static final String ADDRESS_NAME = "Address";
+    public static final String ADDRESS_ID = "AddressID";
+    public static final String ADDRESS_STREETADDRESS1 = "StreetAddress1";
+    public static final String ADDRESS_STREETADDRESS2 = "StreetAddress2";
+    public static final String ADDRESS_CITY = "City";
+    public static final String ADDRESS_STATE = "State";
+    public static final String ADDRESS_COUNTY = "County";
+    public static final String ADDRESS_POSTAL_CODE = "PostalCode";
+    public static final String ADDRESS_COUNTRY = "Country";
+    
+    public static final String AUTOPSY_DETAILS_NAME = "AutopsyDetails";
+    public static final String AUTOPSY_DETAILS_ID = "AutopsyDetailsID";
+    public static final String AUTOPSY_DETAILS_RESULTS_AVAILABLE = "ResultsAvailable";
+    
+    public static final String CAUSE_OF_DEATH_NAME = "CauseOfDeath";
+    public static final String CAUSE_OF_DEATH_ID = "CauseOfDeathID";
+    public static final String CAUSE_OF_DEATH_CAUSE_OF_DEATH = "CauseOfDeath";
+    public static final String CAUSE_OF_DEATH_DISEASE_ONSET_TO_DEATH_INTERVAL = "DiseaseOnsetToDeathInterval";
+    public static final String CAUSE_OF_DEATH_TOBACCO_USE = "TobaccoUse";
+    public static final String CAUSE_OF_DEATH_INJURY_INVOLVED_IN_DEATH = "InjuryInvolvedInDeath";
+    
+    public static final String CORONER_REFERRAL_NAME = "CoronerReferral";
+    public static final String CORONER_REFERRAL_ID = "CoronerReferralID";
+    public static final String CORONER_REFERRAL_CORONER_REFERRAL_NOTE = "CoronerReferralNote";
+    
+    public static final String DEATH_ADMINISTRATION_NAME = "DeathAdministration";
+    public static final String DEATH_ADMINISTRATION_ID = "DeathAdministrationID";
+    public static final String DEATH_ADMINISTRATION_DATE_TIME_PRONOUNCED_DEAD = "DateTimePronouncedDead";
+    
+    public static final String DEATH_CERTIFICATE_NAME = "DeathCertificate";
+    public static final String DEATH_CERTIFICATE_ID = "DeathCertificateID";
+    public static final String DEATH_CERTIFICATE_ADDRESS_ID = "AddressID";
+    public static final String DEATH_CERTIFICATE_CERTIFIER_TYPE = "CertifierType";
+    
+    public static final String DEATH_EVENT_NAME = "DeathEvent";
+    public static final String DEATH_EVENT_ID = "DeathEventID";
+    public static final String DEATH_EVENT_MANNER_OF_DEATH = "MannerOfDeath";
+    public static final String DEATH_EVENT_LOCATION_OF_DEATH = "LocationOfDeath";
+    
+    public static final String NAME_NAME = "Name";
+    public static final String NAME_ID = "NameID";        
+    public static final String NAME_LAST_NAME = "LastName";
+    public static final String NAME_FIRST_NAME = "FirstName";
+    public static final String NAME_MIDDLE_NAME = "MiddleName";
+    public static final String NAME_PREFIX = "Prefix";
+    public static final String NAME_SUFFIX = "Suffix";
+    
+    public static final String PATIENT_DEMOGRAPHICS_NAME = "PatientDemographics";
+    public static final String PATIENT_DEMOGRAPHICS_ID = "PatientDemographicsID";
+    public static final String PATIENT_DEMOGRAPHICS_NAME_ID = "NameID";
+    public static final String PATIENT_DEMOGRAPHICS_ADDRESS_ID = "AddressID";
+    public static final String PATIENT_DEMOGRAPHICS_SOCIAL_SECURITY_NUMBER = "SocialSecurityNumber";
+    public static final String PATIENT_DEMOGRAPHICS_BIRTH_TIME = "BirthTime";
+    public static final String PATIENT_DEMOGRAPHICS_SEX = "Sex";
+    public static final String PATIENT_DEMOGRAPHICS_DEATH_TIME = "DeathTime";
+    
+    public static final String VITAL_RECORDS_DEATH_REPORT_NAME = "VitalRecordsDeathReport";
+    public static final String VITAL_RECORDS_DEATH_REPORT_VITAL_RECORDS_DEATH_REPORT_ID = "VitalRecordsDeathReportID";
+    public static final String VITAL_RECORDS_DEATH_REPORT_AUTOPSY_DETAILS_ID = "AutopsyDetailsID";
+    public static final String VITAL_RECORDS_DEATH_REPORT_CAUSE_OF_DEATH_ID = "CauseOfDeathID";
+    public static final String VITAL_RECORDS_DEATH_REPORT_CORONER_REFERRAL_ID = "CoronerReferralID";
+    public static final String VITAL_RECORDS_DEATH_REPORT_DEATH_ADMINISTRATION = "DeathAdministrationID";
+    public static final String VITAL_RECORDS_DEATH_REPORT_DEATH_CERTIFICATE = "DeathCertificateID";
+    public static final String VITAL_RECORDS_DEATH_REPORT_DEATH_EVENT_ID= "DeathEventID";
     
     private static Connection con;
     private static Statement stmt;
@@ -43,7 +110,7 @@ public class DatabaseConnection {
             Class.forName("com.mysql.jdbc.Driver");
             String url = null; 
             
-            url = "jdbc:mysql://localhost/test?user=dummy&serverTimezone=UTC";
+            url = "jdbc:mysql://localhost/VRDRTestData?user=vrdr&serverTimezone=UTC";
             
             System.out.println("Connecting to mysql on url " + url);
             try {

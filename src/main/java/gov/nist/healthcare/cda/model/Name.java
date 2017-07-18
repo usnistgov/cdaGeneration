@@ -5,6 +5,10 @@
  */
 package gov.nist.healthcare.cda.model;
 
+import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author mccaffrey
@@ -86,6 +90,31 @@ public class Name {
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
+    
+    public static Name getNameById(String id) throws SQLException {
+        Name nm = new Name();
+
+        DatabaseConnection db = new DatabaseConnection();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * ");
+        sql.append("FROM " + DatabaseConnection.NAME_NAME + " ");
+        sql.append("WHERE " + DatabaseConnection.NAME_ID + " = '" + id + "';");
+
+        ResultSet result = db.executeQuery(sql.toString());
+
+        if (result.next()) {
+            nm.setFirstName(result.getString(DatabaseConnection.NAME_FIRST_NAME));
+            nm.setLastName(result.getString(DatabaseConnection.NAME_LAST_NAME));
+            nm.setMiddleName(result.getString(DatabaseConnection.NAME_MIDDLE_NAME));
+            nm.setPrefix(result.getString(DatabaseConnection.NAME_PREFIX));
+            nm.setSuffix(result.getString(DatabaseConnection.NAME_SUFFIX));
+            
+        } else {
+            return null;
+        }
+        return nm;
+    }
+    
     
     
 }

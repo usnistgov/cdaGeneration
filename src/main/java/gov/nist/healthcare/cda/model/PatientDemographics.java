@@ -5,6 +5,10 @@
  */
 package gov.nist.healthcare.cda.model;
 
+import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author mccaffrey
@@ -102,6 +106,34 @@ public class PatientDemographics {
      */
     public void setDeathTime(String deathTime) {
         this.deathTime = deathTime;
+    }
+    
+    public static PatientDemographics getPatientDemographicsById(String id) throws SQLException {
+        PatientDemographics pd = new PatientDemographics();
+
+        DatabaseConnection db = new DatabaseConnection();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * ");
+        sql.append("FROM " + DatabaseConnection.PATIENT_DEMOGRAPHICS_NAME + " ");
+        sql.append("WHERE " + DatabaseConnection.PATIENT_DEMOGRAPHICS_ID + " = '" + id + "';");
+
+        ResultSet result = db.executeQuery(sql.toString());
+
+        if (result.next()) {            
+            pd.setBirthTime(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_BIRTH_TIME));
+            pd.setDeathTime(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_DEATH_TIME));
+            pd.setSex(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_SEX));
+            pd.setSocialSecurityNumber(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_SOCIAL_SECURITY_NUMBER));
+            String addressID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ADDRESS_ID);
+            String nameID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_NAME_ID);
+            Address add = Address.getAddressById(addressID);
+            Name name = Name.getNameById(nameID);
+            pd.setAddress(add);
+            pd.setName(name);                        
+        } else {
+            return null;
+        }
+        return pd;
     }
     
     
