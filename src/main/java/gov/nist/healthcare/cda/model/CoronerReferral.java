@@ -6,6 +6,11 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.CD;
+import hl7OrgV3.ED;
+import hl7OrgV3.II;
+import hl7OrgV3.POCDMT000040Observation;
+import hl7OrgV3.XActMoodDocumentObservation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -51,4 +56,28 @@ public class CoronerReferral {
 
         return cr;
     }
+    
+    public static POCDMT000040Observation populateCoronerReferralObservation(POCDMT000040Observation observation, CoronerReferral cr) {
+        
+        observation.setClassCode("OBS");
+        observation.setMoodCode(XActMoodDocumentObservation.EVN);
+
+        II templateId = observation.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.5");      
+
+        CD code = observation.addNewCode();
+        code.setCode("69438-0");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("Referral note forensic medicine");
+        
+        ED value = ED.Factory.newInstance();
+        value.newCursor().setTextValue(cr.getCoronerReferralNote());       
+        observation.addNewValue();
+        observation.setValueArray(0, value);
+        
+        return observation;
+        
+    }
+    
 }

@@ -6,6 +6,19 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.CD;
+import hl7OrgV3.CE;
+import hl7OrgV3.CS;
+import hl7OrgV3.II;
+import hl7OrgV3.IVLTS;
+import hl7OrgV3.POCDMT000040Act;
+import hl7OrgV3.POCDMT000040Entry;
+import hl7OrgV3.POCDMT000040Procedure;
+import hl7OrgV3.POCDMT000040Section;
+import hl7OrgV3.ST;
+import hl7OrgV3.StrucDocText;
+import hl7OrgV3.XActClassDocumentEntryAct;
+import hl7OrgV3.XDocumentActMood;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -50,4 +63,91 @@ public class DeathAdministration {
 
         return da;
     }
+ 
+    public static POCDMT000040Section populateDeathAdminitrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc) {
+        
+        II templateIdSection = section.addNewTemplateId();
+        templateIdSection.setRoot("2.16.840.1.113883.10.20.26.1.2.3");
+        templateIdSection.setExtension("2016-12-01");
+
+        CE code = section.addNewCode();
+        code.setCode("47519-4");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("History of procedures");
+
+        ST title = section.addNewTitle();
+        title.newCursor().setTextValue("Death Administration Section");
+
+        StrucDocText text = section.addNewText();
+        text.newCursor().setTextValue("He's dead, Jim.");
+        
+        POCDMT000040Entry deathPronouncementEntry = section.addNewEntry();
+        POCDMT000040Act deathPronouncementAct = deathPronouncementEntry.addNewAct();
+        DeathAdministration.populateDeathPronouncementAct(deathPronouncementAct, da);
+
+        POCDMT000040Entry autopsyDetailsEntry = section.addNewEntry();
+        POCDMT000040Procedure autopsyDetailsProcedure = autopsyDetailsEntry.addNewProcedure();
+        AutopsyDetails.populateProcedure(autopsyDetailsProcedure, ad);
+        
+        POCDMT000040Entry deathCertificationEntry = section.addNewEntry();
+        POCDMT000040Act deathCertificationAct = deathCertificationEntry.addNewAct();
+        DeathCertification.populateDeathCertificationAct(deathCertificationAct, dc);
+        
+        POCDMT000040Entry coronerCaseTransferEntry = section.addNewEntry();
+        POCDMT000040Act coronerCaseTransferAct = coronerCaseTransferEntry.addNewAct();
+        DeathAdministration.populatecoronerCaseTransferAct(coronerCaseTransferAct, da);
+        
+        
+        return section;
+        
+    }
+
+    private static POCDMT000040Act populateDeathPronouncementAct(POCDMT000040Act act, DeathAdministration da) {
+        
+        act.setClassCode(XActClassDocumentEntryAct.ACT);
+        act.setMoodCode(XDocumentActMood.EVN);
+        
+        II templateId = act.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.1.5");
+        templateId.setExtension("2016-12-01");
+        
+        CD code = act.addNewCode();
+        //TODO This looks like a mistake. This is a SNOMED CT code
+        code.setCode("446661000124101");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("Death pronouncement");
+        
+        CS statusCode = act.addNewStatusCode();
+        statusCode.setCode("completed");
+        
+        IVLTS effectiveTime = act.addNewEffectiveTime();
+        effectiveTime.setValue(da.getDateTimePronouncedDead());
+        
+        return act;
+                
+    }
+
+    private static POCDMT000040Act populatecoronerCaseTransferAct(POCDMT000040Act act, DeathAdministration da) {
+
+        act.setClassCode(XActClassDocumentEntryAct.ACT);
+        act.setMoodCode(XDocumentActMood.EVN);
+        
+        II templateId = act.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.1.4");
+        templateId.setExtension("2016-12-01");
+
+        CD code = act.addNewCode();
+        code.setCode("74497-9");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("Medical examiner or coroner was contacted");
+
+        return act;
+        
+    }
+
+    
+    
 }

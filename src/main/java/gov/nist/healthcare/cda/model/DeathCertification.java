@@ -6,6 +6,11 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.CD;
+import hl7OrgV3.II;
+import hl7OrgV3.POCDMT000040Act;
+import hl7OrgV3.XActClassDocumentEntryAct;
+import hl7OrgV3.XDocumentActMood;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -13,8 +18,8 @@ import java.sql.SQLException;
  *
  * @author mccaffrey
  */
-public class DeathCertificate {
-    
+public class DeathCertification {
+   
     private Address certifierAddress = null;
     private String certifierType = null;
 
@@ -46,8 +51,8 @@ public class DeathCertificate {
         this.certifierType = certifierType;
     }
     
-    public static DeathCertificate getDeathCertificateById(String id) throws SQLException {
-        DeathCertificate dc = new DeathCertificate();
+    public static DeathCertification getDeathCertificateById(String id) throws SQLException {
+        DeathCertification dc = new DeathCertification();
 
         DatabaseConnection db = new DatabaseConnection();
         StringBuilder sql = new StringBuilder();
@@ -68,4 +73,30 @@ public class DeathCertificate {
 
         return dc;
     }    
+    
+    static POCDMT000040Act populateDeathCertificationAct(POCDMT000040Act act, DeathCertification dc) {
+     
+        act.setClassCode(XActClassDocumentEntryAct.ACT);
+        act.setMoodCode(XDocumentActMood.EVN);
+        
+        II templateId = act.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.7");
+        templateId.setExtension("2016-12-01");
+        
+        CD code = act.addNewCode();       
+        code.setCode("308646001");
+        code.setCodeSystem("2.16.840.1.113883.6.96");
+        code.setCodeSystemName("SNOMED CT");
+        code.setDisplayName("Death certification");
+        
+        act.addNewStatusCode().setCode("completed");
+        
+        act.addNewEffectiveTime();
+        
+        // TODO: This may need to be expanded?
+        
+        return act;
+    }
+        
+    
 }

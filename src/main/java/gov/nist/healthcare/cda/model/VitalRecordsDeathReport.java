@@ -6,6 +6,15 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.ClinicalDocumentDocument1;
+import hl7OrgV3.POCDMT000040AssignedAuthor;
+import hl7OrgV3.POCDMT000040AssignedCustodian;
+import hl7OrgV3.POCDMT000040Author;
+import hl7OrgV3.POCDMT000040ClinicalDocument1;
+import hl7OrgV3.POCDMT000040Custodian;
+import hl7OrgV3.POCDMT000040CustodianOrganization;
+import hl7OrgV3.POCDMT000040InfrastructureRootTypeId;
+import hl7OrgV3.POCDMT000040RecordTarget;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -20,7 +29,7 @@ public class VitalRecordsDeathReport {
     private CauseOfDeath causeOfDeath = null;
     private CoronerReferral coronerReferral = null;
     private DeathAdministration deathAdministration = null;
-    private DeathCertificate deathCertificate = null;
+    private DeathCertification deathCertificate = null;
     private DeathEvent deathEvent = null;
 
     /**
@@ -96,14 +105,14 @@ public class VitalRecordsDeathReport {
     /**
      * @return the deathCertificate
      */
-    public DeathCertificate getDeathCertificate() {
+    public DeathCertification getDeathCertificate() {
         return deathCertificate;
     }
 
     /**
      * @param deathCertificate the deathCertificate to set
      */
-    public void setDeathCertificate(DeathCertificate deathCertificate) {
+    public void setDeathCertificate(DeathCertification deathCertificate) {
         this.deathCertificate = deathCertificate;
     }
 
@@ -146,7 +155,7 @@ public class VitalRecordsDeathReport {
             CauseOfDeath cod = CauseOfDeath.getCauseOfDeathById(causeOfDeathID);
             CoronerReferral cr = CoronerReferral.getCoronerReferralById(coronerReferralID);
             DeathAdministration da = DeathAdministration.getDeathAdministrationById(deathAdministrationID);
-            DeathCertificate dc = DeathCertificate.getDeathCertificateById(deathCertificateID);
+            DeathCertification dc = DeathCertification.getDeathCertificateById(deathCertificateID);
             DeathEvent de = DeathEvent.getDeathEventById(deathEventID);
             
             vrdr.setPatientDemographics(pd);
@@ -161,6 +170,42 @@ public class VitalRecordsDeathReport {
         
         return vrdr;
     }
+    
+    public static ClinicalDocumentDocument1 populateClinicalDocument(ClinicalDocumentDocument1 cda, VitalRecordsDeathReport vrdr) {
+        
+                        
+        POCDMT000040ClinicalDocument1 clinicalDocument = cda.addNewClinicalDocument();
+        POCDMT000040InfrastructureRootTypeId typeId = clinicalDocument.addNewTypeId();
+        typeId.setRoot("2.16.840.1.113883.1.3");
+        typeId.setExtension("POCD_HD000040");
+        clinicalDocument.addNewId().setRoot("PLACEHOLDER"); // TODO
+        clinicalDocument.addNewCode().setCode("PLACEHOLDER"); // TODO
+        clinicalDocument.addNewEffectiveTime().setValue("PLACEHOLDER"); // TODO
+        clinicalDocument.addNewConfidentialityCode().setCode("PLACEHOLDER"); // TODO
+        POCDMT000040RecordTarget recordTarget = clinicalDocument.addNewRecordTarget();
+        PatientDemographics.populateRecordTarget(recordTarget, vrdr.getPatientDemographics());
+        
+        //placeholder TODO
+        POCDMT000040Author author = clinicalDocument.addNewAuthor();
+        author.setTypeCode("AUT");
+        author.setContextControlCode("OP");
+        author.addNewTime();
+        POCDMT000040AssignedAuthor assignedAuthor = author.addNewAssignedAuthor();
+        assignedAuthor.setClassCode("ASSIGNED");
+        assignedAuthor.addNewId();
+        POCDMT000040Custodian custodian = clinicalDocument.addNewCustodian();
+        custodian.setTypeCode("CST");
+        POCDMT000040AssignedCustodian assignedCustodian = custodian.addNewAssignedCustodian();
+        assignedCustodian.setClassCode("ASSIGNED");
+        POCDMT000040CustodianOrganization custodianOrganization = assignedCustodian.addNewRepresentedCustodianOrganization();
+        custodianOrganization.setClassCode("ORG");
+        custodianOrganization.setDeterminerCode("INSTANCE");
+        custodianOrganization.addNewId();
+        
+      
+        
+    }
+    
     
     public static void main (String[] args) throws SQLException {
         

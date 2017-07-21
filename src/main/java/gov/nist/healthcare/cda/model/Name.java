@@ -6,6 +6,8 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.EN;
+import hl7OrgV3.POCDMT000040Section;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -115,6 +117,23 @@ public class Name {
         return nm;
     }
     
+    public static EN populateDeathEventSection(EN en, Name name) {
+        
+        en.addNewFamily().newCursor().setTextValue(name.getLastName());
+        en.addNewGiven().newCursor().setTextValue(name.getFirstName());
+        en.addNewGiven().newCursor().setTextValue(name.getMiddleName());
+        en.addNewPrefix().newCursor().setTextValue(name.getPrefix());
+        en.addNewSuffix().newCursor().setTextValue(name.getSuffix());
+        
+        return en;
+        
+    }
+    
+    public EN toEN() {
+        EN en = EN.Factory.newInstance();
+        Name.populateDeathEventSection(en, this);
+        return en;
+    }
     
     
 }

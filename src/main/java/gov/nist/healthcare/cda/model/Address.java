@@ -155,6 +155,11 @@ public class Address {
         return add;
     }
 
+    public AD toAD() {
+        AD ad = AD.Factory.newInstance();
+        return Address.populateAD(ad, this);        
+    }
+    
     public static AD populateAD(AD ad, Address addr) {
 
         if (addr.getCity() != null) {

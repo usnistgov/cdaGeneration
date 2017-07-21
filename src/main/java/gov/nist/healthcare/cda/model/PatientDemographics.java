@@ -6,6 +6,10 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.II;
+import hl7OrgV3.POCDMT000040Patient;
+import hl7OrgV3.POCDMT000040PatientRole;
+import hl7OrgV3.POCDMT000040RecordTarget;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -136,5 +140,23 @@ public class PatientDemographics {
         return pd;
     }
     
+    
+    public static POCDMT000040RecordTarget populateRecordTarget(POCDMT000040RecordTarget recordTarget, PatientDemographics patientDemographics) {
+    
+        POCDMT000040PatientRole patientRole = recordTarget.addNewPatientRole();
+        patientRole.addNewAddr();
+        patientRole.setAddrArray(0, patientDemographics.getAddress().toAD());
+        II ssn = patientRole.addNewId();
+        ssn.setExtension(patientDemographics.getSocialSecurityNumber());
+        ssn.setRoot("SSN OID GOES HERE"); // TODO
+        
+        POCDMT000040Patient patient = patientRole.addNewPatient();
+        patient.addNewBirthTime().setValue(patientDemographics.getBirthTime());
+        patient.addNewAdministrativeGenderCode().setCode(patientDemographics.getSex());
+        patient.addNewDeceasedTime().setValue(patientDemographics.getDeathTime());
+        
+        return recordTarget;
+        
+    }
     
 }
