@@ -69,7 +69,10 @@ public class DeathEvent {
         ResultSet result = db.executeQuery(sql.toString());
 
         if (result.next()) {
-            de.setLocationOfDeath(result.getString(DatabaseConnection.DEATH_EVENT_LOCATION_OF_DEATH));
+            
+            String addressID = result.getString(DatabaseConnection.DEATH_EVENT_LOCATION_OF_DEATH);            
+            Address add = Address.getAddressById(addressID);            
+            de.setLocationOfDeath(add);
             de.setMannerOfDeath(result.getString(DatabaseConnection.DEATH_EVENT_MANNER_OF_DEATH));            
         } else {
             return null;

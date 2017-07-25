@@ -13,11 +13,14 @@ import hl7OrgV3.II;
 import hl7OrgV3.IVLTS;
 import hl7OrgV3.POCDMT000040Act;
 import hl7OrgV3.POCDMT000040Entry;
+import hl7OrgV3.POCDMT000040EntryRelationship;
+import hl7OrgV3.POCDMT000040Observation;
 import hl7OrgV3.POCDMT000040Procedure;
 import hl7OrgV3.POCDMT000040Section;
 import hl7OrgV3.ST;
 import hl7OrgV3.StrucDocText;
 import hl7OrgV3.XActClassDocumentEntryAct;
+import hl7OrgV3.XActRelationshipEntryRelationship;
 import hl7OrgV3.XDocumentActMood;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -64,7 +67,7 @@ public class DeathAdministration {
         return da;
     }
  
-    public static POCDMT000040Section populateDeathAdminitrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc) {
+    public static POCDMT000040Section populateDeathAdminitrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc, CoronerReferral cr) {
         
         II templateIdSection = section.addNewTemplateId();
         templateIdSection.setRoot("2.16.840.1.113883.10.20.26.1.2.3");
@@ -96,7 +99,7 @@ public class DeathAdministration {
         
         POCDMT000040Entry coronerCaseTransferEntry = section.addNewEntry();
         POCDMT000040Act coronerCaseTransferAct = coronerCaseTransferEntry.addNewAct();
-        DeathAdministration.populatecoronerCaseTransferAct(coronerCaseTransferAct, da);
+        DeathAdministration.populatecoronerCaseTransferAct(coronerCaseTransferAct, da, cr);
         
         
         return section;
@@ -109,7 +112,7 @@ public class DeathAdministration {
         act.setMoodCode(XDocumentActMood.EVN);
         
         II templateId = act.addNewTemplateId();
-        templateId.setRoot("2.16.840.1.113883.10.20.26.1.1.5");
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.15");
         templateId.setExtension("2016-12-01");
         
         CD code = act.addNewCode();
@@ -129,13 +132,13 @@ public class DeathAdministration {
                 
     }
 
-    private static POCDMT000040Act populatecoronerCaseTransferAct(POCDMT000040Act act, DeathAdministration da) {
+    private static POCDMT000040Act populatecoronerCaseTransferAct(POCDMT000040Act act, DeathAdministration da, CoronerReferral cr) {
 
         act.setClassCode(XActClassDocumentEntryAct.ACT);
         act.setMoodCode(XDocumentActMood.EVN);
         
         II templateId = act.addNewTemplateId();
-        templateId.setRoot("2.16.840.1.113883.10.20.26.1.1.4");
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.4");
         templateId.setExtension("2016-12-01");
 
         CD code = act.addNewCode();
@@ -144,6 +147,13 @@ public class DeathAdministration {
         code.setCodeSystemName("LOINC");
         code.setDisplayName("Medical examiner or coroner was contacted");
 
+        if(cr != null) {            
+            POCDMT000040EntryRelationship entryRelationship = act.addNewEntryRelationship();
+            entryRelationship.setTypeCode(XActRelationshipEntryRelationship.COMP);
+            POCDMT000040Observation observation = entryRelationship.addNewObservation();
+            CoronerReferral.populateCoronerReferralObservation(observation, cr);                       
+        }
+        
         return act;
         
     }

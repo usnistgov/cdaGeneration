@@ -11,12 +11,17 @@ import hl7OrgV3.POCDMT000040AssignedAuthor;
 import hl7OrgV3.POCDMT000040AssignedCustodian;
 import hl7OrgV3.POCDMT000040Author;
 import hl7OrgV3.POCDMT000040ClinicalDocument1;
+import hl7OrgV3.POCDMT000040Component2;
+import hl7OrgV3.POCDMT000040Component3;
 import hl7OrgV3.POCDMT000040Custodian;
 import hl7OrgV3.POCDMT000040CustodianOrganization;
 import hl7OrgV3.POCDMT000040InfrastructureRootTypeId;
 import hl7OrgV3.POCDMT000040RecordTarget;
+import hl7OrgV3.POCDMT000040Section;
+import hl7OrgV3.POCDMT000040StructuredBody;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.apache.xmlbeans.XmlOptions;
 
 /**
  *
@@ -202,8 +207,22 @@ public class VitalRecordsDeathReport {
         custodianOrganization.setDeterminerCode("INSTANCE");
         custodianOrganization.addNewId();
         
-      
+        POCDMT000040Component2 component = clinicalDocument.addNewComponent();
+        POCDMT000040StructuredBody structuredBody = component.addNewStructuredBody();
         
+        POCDMT000040Component3 causeOfDeathComponent = structuredBody.addNewComponent();
+        POCDMT000040Section causeOfDeathSection = causeOfDeathComponent.addNewSection();
+        CauseOfDeath.populateCauseOfDeathSection(causeOfDeathSection, vrdr.getCauseOfDeath());
+        
+        POCDMT000040Component3 deathAdministrationComponent = structuredBody.addNewComponent();
+        POCDMT000040Section deathAdministrationSection = deathAdministrationComponent.addNewSection();        
+        DeathAdministration.populateDeathAdminitrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral());
+        
+        POCDMT000040Component3 deathEventComponent = structuredBody.addNewComponent();
+        POCDMT000040Section deathEventSection = deathEventComponent.addNewSection();        
+        DeathEvent.populateDeathEventSection(deathEventSection, vrdr.getDeathEvent());
+        
+        return cda;
     }
     
     
@@ -212,6 +231,13 @@ public class VitalRecordsDeathReport {
         VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
         
         System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+        ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();
+        VitalRecordsDeathReport.populateClinicalDocument(cda, vrdr);
+                
+        XmlOptions options = new XmlOptions();
+        options.setCharacterEncoding("UTF-8");
+        options.setSavePrettyPrint();
+        System.out.println(cda.xmlText(options));
         
     }
     
