@@ -10,8 +10,12 @@ import hl7OrgV3.II;
 import hl7OrgV3.POCDMT000040Patient;
 import hl7OrgV3.POCDMT000040PatientRole;
 import hl7OrgV3.POCDMT000040RecordTarget;
+import hl7OrgV3.TS;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.xml.namespace.QName;
+import org.apache.xmlbeans.XmlCursor;
+
 
 /**
  *
@@ -148,12 +152,23 @@ public class PatientDemographics {
         patientRole.setAddrArray(0, patientDemographics.getAddress().toAD());
         II ssn = patientRole.addNewId();
         ssn.setExtension(patientDemographics.getSocialSecurityNumber());
-        ssn.setRoot("SSN OID GOES HERE"); // TODO
+        ssn.setRoot("2.16.840.1.113883.4.1");
+        
         
         POCDMT000040Patient patient = patientRole.addNewPatient();
+        patient.addNewName();
+        patient.setNameArray(0, patientDemographics.getName().toPN());
         patient.addNewBirthTime().setValue(patientDemographics.getBirthTime());
         patient.addNewAdministrativeGenderCode().setCode(patientDemographics.getSex());
-        patient.addNewDeceasedTime().setValue(patientDemographics.getDeathTime());
+        
+        TS deceasedTime = patient.addNewDeceasedTime();
+        deceasedTime.setValue(patientDemographics.getDeathTime());
+        QName type = new QName("http://www.w3.org/2001/XMLSchema-instance","type");  
+        XmlCursor cursor = deceasedTime.newCursor();
+        cursor.setAttributeText(type, "UVP_TS");                                
+        QName probability = new QName("probability");
+        cursor.setAttributeText(probability, "1");   
+        patient.addNewDeceasedInd().setValue(true);
         
         return recordTarget;
         

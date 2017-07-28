@@ -7,9 +7,12 @@ package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
 import hl7OrgV3.EN;
+import hl7OrgV3.PN;
 import hl7OrgV3.POCDMT000040Section;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -117,8 +120,10 @@ public class Name {
         return nm;
     }
     
-    public static EN populateDeathEventSection(EN en, Name name) {
-        
+    public static EN populateName(EN en, Name name) {
+        List<String> use = new ArrayList<String>();
+        use.add("L");
+        en.setUse(use);
         en.addNewFamily().newCursor().setTextValue(name.getLastName());
         en.addNewGiven().newCursor().setTextValue(name.getFirstName());
         en.addNewGiven().newCursor().setTextValue(name.getMiddleName());
@@ -129,11 +134,32 @@ public class Name {
         
     }
     
+    public static PN populateName(PN pn, Name name) {
+        List<String> use = new ArrayList<String>();
+        use.add("L");
+        pn.setUse(use);        
+        pn.addNewFamily().newCursor().setTextValue(name.getLastName());
+        pn.addNewGiven().newCursor().setTextValue(name.getFirstName());
+        pn.addNewGiven().newCursor().setTextValue(name.getMiddleName());
+        pn.addNewPrefix().newCursor().setTextValue(name.getPrefix());
+        pn.addNewSuffix().newCursor().setTextValue(name.getSuffix());
+        
+        return pn;
+    }
+    
+    
     public EN toEN() {
         EN en = EN.Factory.newInstance();
-        Name.populateDeathEventSection(en, this);
+        Name.populateName(en, this);
         return en;
     }
     
+    public PN toPN() {
+        
+        PN pn = PN.Factory.newInstance();
+        Name.populateName(pn, this);
+        return pn;
+        
+    }
     
 }

@@ -367,7 +367,7 @@ public class CauseOfDeath {
         observation.setMoodCode(XActMoodDocumentObservation.EVN);
 
         II templateId = observation.addNewTemplateId();
-        templateId.setRoot("2.16.840.1.113883.10.20.26.1.1.2");
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.12");
         templateId.setExtension("2016-12-01");
 
         CD code = observation.addNewCode();
@@ -395,8 +395,8 @@ public class CauseOfDeath {
         observation.setClassCode("OBS");
         observation.setMoodCode(XActMoodDocumentObservation.EVN);
 
-        II templateId = observation.addNewTemplateId();
-        templateId.setRoot("2.16.840.1.113883.10.20.26.1.1.1");
+        II templateId = observation.addNewTemplateId();                            
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.14");
         templateId.setExtension("2016-12-01");
 
         CD code = observation.addNewCode();
@@ -435,9 +435,9 @@ public class CauseOfDeath {
         //Hardcoded for now
         CD value = CD.Factory.newInstance();
         value.setCode("PHC1350");
-        code.setCodeSystem("2.16.840.1.114222.4.5.274");
-        code.setCodeSystemName("PHIN VS (CDC Local Coding System)");
-        code.setDisplayName("During unspecified activity");
+        value.setCodeSystem("2.16.840.1.114222.4.5.274");
+        value.setCodeSystemName("PHIN VS (CDC Local Coding System)");
+        value.setDisplayName("During unspecified activity");
         
         observation.addNewValue();
         observation.setValueArray(0, value);

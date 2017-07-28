@@ -75,9 +75,16 @@ public class AutopsyDetails {
         } else {
             procedure.setNegationInd(true);
         }
-        II templateId = procedure.addNewTemplateId();
-        templateId.setRoot("2.16.840.1.113883.10.20.26.1.2");
-
+        II templateId1 = procedure.addNewTemplateId();
+        templateId1.setRoot("2.16.840.1.113883.10.20.26.1.2");
+        templateId1.setExtension("2016-12-01");
+        
+        II templateId2 = procedure.addNewTemplateId();
+        templateId2.setRoot("2.16.840.1.113883.10.20.22.4.14");
+        templateId2.setExtension("2014-06-09");
+       
+        procedure.addNewId();
+        
         CD procedureCode = procedure.addNewCode();
         procedureCode.setCode("29240004");
         procedureCode.setDisplayName("Autopsy Procedure");
@@ -98,9 +105,9 @@ public class AutopsyDetails {
         observation.setClassCode("OBS");
         observation.setMoodCode(XActMoodDocumentObservation.EVN);
 
-        II templateId2 = observation.addNewTemplateId();
-        templateId2.setRoot("2.16.840.1.113883.10.20.26.1.3");
-        templateId2.setExtension("2016-12-01");
+        II templateId3 = observation.addNewTemplateId();
+        templateId3.setRoot("2.16.840.1.113883.10.20.26.1.3");
+        templateId3.setExtension("2016-12-01");
 
         CD availCode = observation.addNewCode();
         availCode.setCode("69436-4");

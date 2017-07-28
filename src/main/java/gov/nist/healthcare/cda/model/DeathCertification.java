@@ -78,10 +78,15 @@ public class DeathCertification {
      
         act.setClassCode(XActClassDocumentEntryAct.ACT);
         act.setMoodCode(XDocumentActMood.EVN);
+        act.addNewId();
         
         II templateId = act.addNewTemplateId();
         templateId.setRoot("2.16.840.1.113883.10.20.26.1.7");
         templateId.setExtension("2016-12-01");
+        
+        II templateId2 = act.addNewTemplateId();
+        templateId2.setRoot("2.16.840.1.113883.10.20.22.4.12");
+        templateId2.setExtension("2014-06-09");
         
         CD code = act.addNewCode();       
         code.setCode("308646001");

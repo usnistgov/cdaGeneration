@@ -6,7 +6,9 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.CE;
 import hl7OrgV3.ClinicalDocumentDocument1;
+import hl7OrgV3.II;
 import hl7OrgV3.POCDMT000040AssignedAuthor;
 import hl7OrgV3.POCDMT000040AssignedCustodian;
 import hl7OrgV3.POCDMT000040Author;
@@ -180,11 +182,22 @@ public class VitalRecordsDeathReport {
         
                         
         POCDMT000040ClinicalDocument1 clinicalDocument = cda.addNewClinicalDocument();
+        clinicalDocument.addNewRealmCode().setCode("US");
         POCDMT000040InfrastructureRootTypeId typeId = clinicalDocument.addNewTypeId();
         typeId.setRoot("2.16.840.1.113883.1.3");
         typeId.setExtension("POCD_HD000040");
+        II templateID = clinicalDocument.addNewTemplateId();
+        templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.3");
+        templateID.setExtension("2016-12-01");                
         clinicalDocument.addNewId().setRoot("PLACEHOLDER"); // TODO
-        clinicalDocument.addNewCode().setCode("PLACEHOLDER"); // TODO
+        
+        CE code = clinicalDocument.addNewCode();
+        code.setCode("69409-1");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("\"U.S. standard certificate of death -- 2003 revision");
+        
+        clinicalDocument.addNewTitle().newCursor().setTextValue("PLACEHOLDER");
         clinicalDocument.addNewEffectiveTime().setValue("PLACEHOLDER"); // TODO
         clinicalDocument.addNewConfidentialityCode().setCode("PLACEHOLDER"); // TODO
         POCDMT000040RecordTarget recordTarget = clinicalDocument.addNewRecordTarget();
@@ -206,6 +219,7 @@ public class VitalRecordsDeathReport {
         custodianOrganization.setClassCode("ORG");
         custodianOrganization.setDeterminerCode("INSTANCE");
         custodianOrganization.addNewId();
+        custodianOrganization.addNewName();
         
         POCDMT000040Component2 component = clinicalDocument.addNewComponent();
         POCDMT000040StructuredBody structuredBody = component.addNewStructuredBody();
@@ -237,7 +251,8 @@ public class VitalRecordsDeathReport {
         XmlOptions options = new XmlOptions();
         options.setCharacterEncoding("UTF-8");
         options.setSavePrettyPrint();
-        System.out.println(cda.xmlText(options));
+        
+        System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
         
     }
     

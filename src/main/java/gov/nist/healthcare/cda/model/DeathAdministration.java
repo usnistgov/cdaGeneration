@@ -110,11 +110,15 @@ public class DeathAdministration {
         
         act.setClassCode(XActClassDocumentEntryAct.ACT);
         act.setMoodCode(XDocumentActMood.EVN);
-        
-        II templateId = act.addNewTemplateId();
-        templateId.setRoot("2.16.840.1.113883.10.20.26.1.15");
-        templateId.setExtension("2016-12-01");
-        
+        act.addNewId();
+        II templateId1 = act.addNewTemplateId();
+        templateId1.setRoot("2.16.840.1.113883.10.20.26.1.15");
+        templateId1.setExtension("2016-12-01");
+
+        II templateId2 = act.addNewTemplateId();
+        templateId2.setRoot("2.16.840.1.113883.10.20.22.4.12");
+        templateId2.setExtension("2014-06-09");
+             
         CD code = act.addNewCode();
         //TODO This looks like a mistake. This is a SNOMED CT code
         code.setCode("446661000124101");
