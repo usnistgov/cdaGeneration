@@ -6,6 +6,7 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import gov.nist.healthcare.hl7.HL7Utils;
 import hl7OrgV3.CE;
 import hl7OrgV3.ClinicalDocumentDocument1;
 import hl7OrgV3.II;
@@ -23,6 +24,8 @@ import hl7OrgV3.POCDMT000040Section;
 import hl7OrgV3.POCDMT000040StructuredBody;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.UUID;
 import org.apache.xmlbeans.XmlOptions;
 
 /**
@@ -189,7 +192,7 @@ public class VitalRecordsDeathReport {
         II templateID = clinicalDocument.addNewTemplateId();
         templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.3");
         templateID.setExtension("2016-12-01");                
-        clinicalDocument.addNewId().setRoot("PLACEHOLDER"); // TODO
+        clinicalDocument.addNewId().setRoot(UUID.randomUUID().toString());
         
         CE code = clinicalDocument.addNewCode();
         code.setCode("69409-1");
@@ -197,9 +200,16 @@ public class VitalRecordsDeathReport {
         code.setCodeSystemName("LOINC");
         code.setDisplayName("\"U.S. standard certificate of death -- 2003 revision");
         
-        clinicalDocument.addNewTitle().newCursor().setTextValue("PLACEHOLDER");
-        clinicalDocument.addNewEffectiveTime().setValue("PLACEHOLDER"); // TODO
-        clinicalDocument.addNewConfidentialityCode().setCode("PLACEHOLDER"); // TODO
+        clinicalDocument.addNewTitle().newCursor().setTextValue("U.S. standard certificate of death -- 2003 revision");
+        clinicalDocument.addNewEffectiveTime().setValue(HL7Utils.convertDate(Calendar.getInstance()));
+        
+        CE confidentialityCode = clinicalDocument.addNewConfidentialityCode();
+        
+        confidentialityCode.setCode("N");
+        confidentialityCode.setCodeSystem("2.16.840.1.11.3883.5.25");
+        confidentialityCode.setCodeSystemName("Confidentiality");
+        confidentialityCode.setDisplayName("Normal");
+                                    
         POCDMT000040RecordTarget recordTarget = clinicalDocument.addNewRecordTarget();
         PatientDemographics.populateRecordTarget(recordTarget, vrdr.getPatientDemographics());
         
@@ -230,7 +240,7 @@ public class VitalRecordsDeathReport {
         
         POCDMT000040Component3 deathAdministrationComponent = structuredBody.addNewComponent();
         POCDMT000040Section deathAdministrationSection = deathAdministrationComponent.addNewSection();        
-        DeathAdministration.populateDeathAdminitrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral());
+        DeathAdministration.populateDeathAdministrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral());
         
         POCDMT000040Component3 deathEventComponent = structuredBody.addNewComponent();
         POCDMT000040Section deathEventSection = deathEventComponent.addNewSection();        
@@ -251,6 +261,8 @@ public class VitalRecordsDeathReport {
         XmlOptions options = new XmlOptions();
         options.setCharacterEncoding("UTF-8");
         options.setSavePrettyPrint();
+        
+        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         
         System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
         

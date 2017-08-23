@@ -132,7 +132,22 @@ public class CauseOfDeath {
         title.newCursor().setTextValue("Coded Cause Of Death Section");
 
         StrucDocText text = section.addNewText();
-        text.newCursor().setTextValue("Placeholder");
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>");
+        sb.append("<thead>");
+        sb.append("<tr><th>Cause Of Death</th></tr>");
+        sb.append("<tr><th>Disease Onset To Death Interval</th></tr>");
+        sb.append("<tr><th>Injury Involved In Death</th></tr>");        
+        sb.append("<tr><th>Tobacco Use Contributed to Death</th></tr>");
+        sb.append("</thead>");
+        sb.append("<tr>" + cod.getCauseOfDeath() + " </td></tr>");
+        sb.append("<tr>" + cod.getDiseaseOnsetToDeathInterval() + " </td></tr>");
+        sb.append("<tr>" + cod.getInjuryInvolvedInDeath() + " </td></tr>");
+        sb.append("<tr>" + cod.getTobaccoUse() + " </td></tr>");
+        sb.append("</tbody>");
+        sb.append("</table>");
+        text.newCursor().setTextValue(sb.toString());
 
         POCDMT000040Entry causalInformationEntry = section.addNewEntry();
         POCDMT000040Organizer causalInformationOrganizer = causalInformationEntry.addNewOrganizer();

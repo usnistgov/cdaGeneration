@@ -67,7 +67,7 @@ public class DeathAdministration {
         return da;
     }
  
-    public static POCDMT000040Section populateDeathAdminitrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc, CoronerReferral cr) {
+    public static POCDMT000040Section populateDeathAdministrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc, CoronerReferral cr) {
         
         II templateIdSection = section.addNewTemplateId();
         templateIdSection.setRoot("2.16.840.1.113883.10.20.26.1.2.3");
