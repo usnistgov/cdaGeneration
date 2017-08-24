@@ -78,6 +78,9 @@ public class DatabaseConnection {
     public static final String PATIENT_DEMOGRAPHICS_SOCIAL_SECURITY_NUMBER = "SocialSecurityNumber";
     public static final String PATIENT_DEMOGRAPHICS_BIRTH_TIME = "BirthTime";
     public static final String PATIENT_DEMOGRAPHICS_SEX = "Sex";
+    public static final String PATIENT_DEMOGRAPHICS_RACE_CODE_1 = "RaceCode1";
+    public static final String PATIENT_DEMOGRAPHICS_RACE_CODE_2 = "RaceCode2";
+    public static final String PATIENT_DEMOGRAPHICS_ETHNIC_GROUP = "EthnicGroup";
     public static final String PATIENT_DEMOGRAPHICS_DEATH_TIME = "DeathTime";
     
     public static final String VITAL_RECORDS_DEATH_REPORT_NAME = "VitalRecordsDeathReport";

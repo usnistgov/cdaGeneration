@@ -6,6 +6,7 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.CE;
 import hl7OrgV3.II;
 import hl7OrgV3.POCDMT000040Patient;
 import hl7OrgV3.POCDMT000040PatientRole;
@@ -31,6 +32,9 @@ public class PatientDemographics {
     private String sex = null;
     private Address address = null;
     private String deathTime = null;
+    private String raceCode1 = null;
+    private String raceCode2 = null;
+    private String ethnicGroup = null;
 
     /**
      * @return the socialSecurityNumber
@@ -132,6 +136,9 @@ public class PatientDemographics {
             pd.setDeathTime(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_DEATH_TIME));
             pd.setSex(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_SEX));
             pd.setSocialSecurityNumber(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_SOCIAL_SECURITY_NUMBER));
+            pd.setRaceCode1(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_RACE_CODE_1));
+            pd.setRaceCode2(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_RACE_CODE_2));
+            pd.setEthnicGroup(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ETHNIC_GROUP));
             String addressID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ADDRESS_ID);
             String nameID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_NAME_ID);
             Address add = Address.getAddressById(addressID);
@@ -161,6 +168,21 @@ public class PatientDemographics {
         patient.addNewBirthTime().setValue(patientDemographics.getBirthTime());
         patient.addNewAdministrativeGenderCode().setCode(patientDemographics.getSex());
         
+        CE raceCode1 = patient.addNewRaceCode();
+        raceCode1.setCodeSystem("2.16.840.1.113883.6.238");
+        raceCode1.setCodeSystemName("Race &amp; Ethnicity - CDC");
+        raceCode1.setCode(patientDemographics.getRaceCode1());
+
+        CE raceCode2 = patient.addNewRaceCode2();
+        raceCode2.setCodeSystem("2.16.840.1.113883.6.238");
+        raceCode2.setCodeSystemName("Race &amp; Ethnicity - CDC");
+        raceCode2.setCode(patientDemographics.getRaceCode2());
+                
+        CE ethnicCode = patient.addNewEthnicGroupCode();
+        ethnicCode.setCodeSystem("2.16.840.1.113883.6.238");
+        ethnicCode.setCodeSystemName("Race &amp; Ethnicity - CDC");
+        ethnicCode.setCode(patientDemographics.getEthnicGroup());
+                                             
         TS deceasedTime = patient.addNewDeceasedTime();
         deceasedTime.setValue(patientDemographics.getDeathTime());
         QName type = new QName("http://www.w3.org/2001/XMLSchema-instance","type");  
@@ -172,6 +194,48 @@ public class PatientDemographics {
         
         return recordTarget;
         
+    }
+
+    /**
+     * @return the raceCode1
+     */
+    public String getRaceCode1() {
+        return raceCode1;
+    }
+
+    /**
+     * @param raceCode1 the raceCode1 to set
+     */
+    public void setRaceCode1(String raceCode1) {
+        this.raceCode1 = raceCode1;
+    }
+
+    /**
+     * @return the raceCode2
+     */
+    public String getRaceCode2() {
+        return raceCode2;
+    }
+
+    /**
+     * @param raceCode2 the raceCode2 to set
+     */
+    public void setRaceCode2(String raceCode2) {
+        this.raceCode2 = raceCode2;
+    }
+
+    /**
+     * @return the ethnicCode
+     */
+    public String getEthnicGroup() {
+        return ethnicGroup;
+    }
+
+    /**
+     * @param ethnicCode the ethnicCode to set
+     */
+    public void setEthnicGroup(String ethnicGroup) {
+        this.ethnicGroup = ethnicGroup;
     }
     
 }
