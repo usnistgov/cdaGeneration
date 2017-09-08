@@ -63,6 +63,16 @@ public class DatabaseConnection {
     public static final String DEATH_EVENT_MANNER_OF_DEATH = "MannerOfDeath";
     public static final String DEATH_EVENT_LOCATION_OF_DEATH = "LocationOfDeath";
     
+    public static final String RACE_NAME = "Race";
+    public static final String RACE_ID = "RaceID";
+    public static final String RACE_RACE = "Race";
+    
+    public static final String ETHNICITY_NAME = "Ethnicity";
+    public static final String ETHNICITY_ID = "EthnicityID";
+    public static final String ETHNICITY_ETHNICITY = "Ethnicity";
+    
+    
+    
     public static final String NAME_NAME = "Name";
     public static final String NAME_ID = "NameID";        
     public static final String NAME_LAST_NAME = "LastName";

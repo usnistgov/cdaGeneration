@@ -33,7 +33,16 @@ import org.apache.xmlbeans.XmlOptions;
  * @author mccaffrey
  */
 public class VitalRecordsDeathReport {
-    
+
+    public enum DocumentType {
+        CODED_CAUSE_OF_DEATH,
+        CODED_RACE_AND_ETHNICITY,
+        JURISDICTIONAL_DEATH_INFORMATION,
+        PROVIDER_DEATH_REGISTRATION,
+        VOID_DEATH_CERTIFICATE
+    }
+
+    private DocumentType documentType = null;
     private PatientDemographics patientDemographics = null;
     private AutopsyDetails autopsyDetails = null;
     private CauseOfDeath causeOfDeath = null;
@@ -139,27 +148,27 @@ public class VitalRecordsDeathReport {
     public void setDeathEvent(DeathEvent deathEvent) {
         this.deathEvent = deathEvent;
     }
-    
+
     public static VitalRecordsDeathReport getVRDRById(String id) throws SQLException {
         VitalRecordsDeathReport vrdr = new VitalRecordsDeathReport();
-        
+
         DatabaseConnection db = new DatabaseConnection();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT * ");
         sql.append("FROM " + DatabaseConnection.VITAL_RECORDS_DEATH_REPORT_NAME + " ");
         sql.append("WHERE " + DatabaseConnection.VITAL_RECORDS_DEATH_REPORT_VITAL_RECORDS_DEATH_REPORT_ID + " = '" + id + "';");
-        
+
         ResultSet result = db.executeQuery(sql.toString());
-     
-        if(result.next()) {
+
+        if (result.next()) {
             String patientDemographicsID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ID);
             String autopsyDetailsID = result.getString(DatabaseConnection.AUTOPSY_DETAILS_ID);
             String causeOfDeathID = result.getString(DatabaseConnection.CAUSE_OF_DEATH_ID);
             String coronerReferralID = result.getString(DatabaseConnection.CORONER_REFERRAL_ID);
             String deathAdministrationID = result.getString(DatabaseConnection.DEATH_ADMINISTRATION_ID);
             String deathCertificateID = result.getString(DatabaseConnection.DEATH_CERTIFICATE_ID);
-            String deathEventID = result.getString(DatabaseConnection.DEATH_EVENT_ID);        
-            
+            String deathEventID = result.getString(DatabaseConnection.DEATH_EVENT_ID);
+
             PatientDemographics pd = PatientDemographics.getPatientDemographicsById(patientDemographicsID);
             AutopsyDetails ad = AutopsyDetails.getAutopsyDetailsById(autopsyDetailsID);
             CauseOfDeath cod = CauseOfDeath.getCauseOfDeathById(causeOfDeathID);
@@ -167,52 +176,66 @@ public class VitalRecordsDeathReport {
             DeathAdministration da = DeathAdministration.getDeathAdministrationById(deathAdministrationID);
             DeathCertification dc = DeathCertification.getDeathCertificateById(deathCertificateID);
             DeathEvent de = DeathEvent.getDeathEventById(deathEventID);
-            
+
             vrdr.setPatientDemographics(pd);
             vrdr.setAutopsyDetails(ad);
             vrdr.setCauseOfDeath(cod);
             vrdr.setCoronerReferral(cr);
             vrdr.setDeathAdministration(da);
             vrdr.setDeathCertificate(dc);
-            vrdr.setDeathEvent(de);            
+            vrdr.setDeathEvent(de);
         }
-        
-        
+
         return vrdr;
     }
-    
+
     public static ClinicalDocumentDocument1 populateClinicalDocument(ClinicalDocumentDocument1 cda, VitalRecordsDeathReport vrdr) {
-        
-                        
+
         POCDMT000040ClinicalDocument1 clinicalDocument = cda.addNewClinicalDocument();
         clinicalDocument.addNewRealmCode().setCode("US");
         POCDMT000040InfrastructureRootTypeId typeId = clinicalDocument.addNewTypeId();
         typeId.setRoot("2.16.840.1.113883.1.3");
         typeId.setExtension("POCD_HD000040");
         II templateID = clinicalDocument.addNewTemplateId();
-        templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.3");
-        templateID.setExtension("2016-12-01");                
+        switch (vrdr.getDocumentType()) {
+            case CODED_CAUSE_OF_DEATH:
+                templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.3");
+                templateID.setExtension("2016-12-01");
+                break;
+            case CODED_RACE_AND_ETHNICITY:
+                break;
+            case JURISDICTIONAL_DEATH_INFORMATION:
+                break;
+            case PROVIDER_DEATH_REGISTRATION:
+                break;
+            case VOID_DEATH_CERTIFICATE:
+                break;
+            default:
+                templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.3");
+                templateID.setExtension("2016-12-01");
+
+        }
         clinicalDocument.addNewId().setRoot(UUID.randomUUID().toString());
-        
+
         CE code = clinicalDocument.addNewCode();
         code.setCode("69409-1");
         code.setCodeSystem("2.16.840.1.113883.6.1");
         code.setCodeSystemName("LOINC");
         code.setDisplayName("\"U.S. standard certificate of death -- 2003 revision");
-        
+
         clinicalDocument.addNewTitle().newCursor().setTextValue("U.S. standard certificate of death -- 2003 revision");
         clinicalDocument.addNewEffectiveTime().setValue(HL7Utils.convertDate(Calendar.getInstance()));
-        
+
         CE confidentialityCode = clinicalDocument.addNewConfidentialityCode();
-        
+
         confidentialityCode.setCode("N");
         confidentialityCode.setCodeSystem("2.16.840.1.11.3883.5.25");
         confidentialityCode.setCodeSystemName("Confidentiality");
         confidentialityCode.setDisplayName("Normal");
-                                    
+
         POCDMT000040RecordTarget recordTarget = clinicalDocument.addNewRecordTarget();
         PatientDemographics.populateRecordTarget(recordTarget, vrdr.getPatientDemographics());
-        
+
         //placeholder TODO
         POCDMT000040Author author = clinicalDocument.addNewAuthor();
         author.setTypeCode("AUT");
@@ -230,42 +253,76 @@ public class VitalRecordsDeathReport {
         custodianOrganization.setDeterminerCode("INSTANCE");
         custodianOrganization.addNewId();
         custodianOrganization.addNewName();
-        
+
         POCDMT000040Component2 component = clinicalDocument.addNewComponent();
         POCDMT000040StructuredBody structuredBody = component.addNewStructuredBody();
-        
-        POCDMT000040Component3 causeOfDeathComponent = structuredBody.addNewComponent();
-        POCDMT000040Section causeOfDeathSection = causeOfDeathComponent.addNewSection();
-        CauseOfDeath.populateCauseOfDeathSection(causeOfDeathSection, vrdr.getCauseOfDeath());
-        
-        POCDMT000040Component3 deathAdministrationComponent = structuredBody.addNewComponent();
-        POCDMT000040Section deathAdministrationSection = deathAdministrationComponent.addNewSection();        
-        DeathAdministration.populateDeathAdministrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral());
-        
-        POCDMT000040Component3 deathEventComponent = structuredBody.addNewComponent();
-        POCDMT000040Section deathEventSection = deathEventComponent.addNewSection();        
-        DeathEvent.populateDeathEventSection(deathEventSection, vrdr.getDeathEvent());
-        
+
+        if (vrdr.getCauseOfDeath() != null) {
+            POCDMT000040Component3 causeOfDeathComponent = structuredBody.addNewComponent();
+            POCDMT000040Section causeOfDeathSection = causeOfDeathComponent.addNewSection();
+            CauseOfDeath.populateCauseOfDeathSection(causeOfDeathSection, vrdr.getCauseOfDeath());
+        }
+
+        if (vrdr.getDeathAdministration() != null && vrdr.getAutopsyDetails() != null && vrdr.getDeathCertificate() != null && vrdr.getCoronerReferral() != null) {
+            POCDMT000040Component3 deathAdministrationComponent = structuredBody.addNewComponent();
+            POCDMT000040Section deathAdministrationSection = deathAdministrationComponent.addNewSection();
+            DeathAdministration.populateDeathAdministrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral());
+        }
+        if (vrdr.getDeathEvent() != null) {
+            POCDMT000040Component3 deathEventComponent = structuredBody.addNewComponent();
+            POCDMT000040Section deathEventSection = deathEventComponent.addNewSection();
+            DeathEvent.populateDeathEventSection(deathEventSection, vrdr.getDeathEvent());
+        }
+
         return cda;
     }
-    
-    
-    public static void main (String[] args) throws SQLException {
-        
-        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
-        
-        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+
+    public static String generateCodedCauseOfDeathDocument(String databaseID) throws SQLException {
+        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById(databaseID);
+
+        //System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();
         VitalRecordsDeathReport.populateClinicalDocument(cda, vrdr);
-                
+
         XmlOptions options = new XmlOptions();
         options.setCharacterEncoding("UTF-8");
         options.setSavePrettyPrint();
-        
-        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
-        
-        System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
-        
+
+        //System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+        //System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
+        return cda.xmlText(options).replace("type=\"urn:", "type=\"");
     }
-    
+
+    public static void main(String[] args) throws SQLException {
+
+        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
+
+        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+        ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();
+        VitalRecordsDeathReport.populateClinicalDocument(cda, vrdr);
+
+        XmlOptions options = new XmlOptions();
+        options.setCharacterEncoding("UTF-8");
+        options.setSavePrettyPrint();
+
+        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+
+        System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
+
+    }
+
+    /**
+     * @return the documentType
+     */
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    /**
+     * @param documentType the documentType to set
+     */
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
 }

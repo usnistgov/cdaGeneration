@@ -223,7 +223,8 @@ public class CauseOfDeath {
         code.setDisplayName("Cause of death entity axis code");
 
         CD value = CD.Factory.newInstance();
-        value.setCode("ICD-10 GOES HERE");
+        //TODO: Placeholder?
+        value.setCode(cod.getCauseOfDeath());
         observation.addNewValue();
         observation.setValueArray(0, value);
 
@@ -274,7 +275,8 @@ public class CauseOfDeath {
         code.setDisplayName("Cause of death record axis code");
 
         CD value = CD.Factory.newInstance();
-        value.setCode("ICD-10 GOES HERE");
+        //TODO: Placeholder?
+        value.setCode(cod.getCauseOfDeath());
         observation.addNewValue();
         observation.setValueArray(0, value);
 
@@ -298,7 +300,8 @@ public class CauseOfDeath {
         code.setDisplayName("Cause of death.underlying [Automated]");
 
         CD value = CD.Factory.newInstance();
-        value.setCode("ICD-10 GOES HERE");
+        //TODO: Placeholder?
+        value.setCode(cod.getCauseOfDeath());
         observation.addNewValue();
         observation.setValueArray(0, value);
 
