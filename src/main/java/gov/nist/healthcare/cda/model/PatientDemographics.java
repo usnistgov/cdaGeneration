@@ -6,10 +6,13 @@
 package gov.nist.healthcare.cda.model;
 
 import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
+import hl7OrgV3.AD;
 import hl7OrgV3.CE;
 import hl7OrgV3.II;
+import hl7OrgV3.POCDMT000040Birthplace;
 import hl7OrgV3.POCDMT000040Patient;
 import hl7OrgV3.POCDMT000040PatientRole;
+import hl7OrgV3.POCDMT000040Place;
 import hl7OrgV3.POCDMT000040RecordTarget;
 import hl7OrgV3.TS;
 import java.sql.ResultSet;
@@ -35,7 +38,9 @@ public class PatientDemographics {
     private String raceCode1 = null;
     private String raceCode2 = null;
     private String ethnicGroup = null;
-
+    private String maritalStatus = null;
+    private String birthPlace = null;
+    
     /**
      * @return the socialSecurityNumber
      */
@@ -139,6 +144,8 @@ public class PatientDemographics {
             pd.setRaceCode1(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_RACE_CODE_1));
             pd.setRaceCode2(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_RACE_CODE_2));
             pd.setEthnicGroup(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ETHNIC_GROUP));
+            pd.setMaritalStatus(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_MARITAL_STATUS));
+            pd.setBirthPlace(result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_BIRTH_PLACE));
             String addressID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ADDRESS_ID);
             String nameID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_NAME_ID);
             Address add = Address.getAddressById(addressID);
@@ -192,6 +199,21 @@ public class PatientDemographics {
         cursor.setAttributeText(probability, "1");   
         patient.addNewDeceasedInd().setValue(true);
         
+        if(patientDemographics.getMaritalStatus() != null && !patientDemographics.getMaritalStatus().isEmpty()) {
+            CE maritalStatus = patient.addNewMaritalStatusCode();
+            maritalStatus.setCodeSystem("2.16.840.1.113883.12.2");
+            maritalStatus.setCodeSystemName("Marital status (HL7)");
+            maritalStatus.setCode(patientDemographics.getMaritalStatus());                        
+        }
+        
+        if(patientDemographics.getBirthPlace() != null && !patientDemographics.getBirthPlace().isEmpty()) {
+            POCDMT000040Birthplace birthPlace = patient.addNewBirthplace();
+            POCDMT000040Place place = birthPlace.addNewPlace();
+            AD address = place.addNewAddr();
+            address.addNewCity().setNullFlavor("UNK");
+            address.addNewState().setNullFlavor("UNK");
+            address.addNewCountry().newCursor().setTextValue(patientDemographics.getBirthPlace());                     
+        }
         return recordTarget;
         
     }
@@ -236,6 +258,34 @@ public class PatientDemographics {
      */
     public void setEthnicGroup(String ethnicGroup) {
         this.ethnicGroup = ethnicGroup;
+    }
+
+    /**
+     * @return the maritalStatus
+     */
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    /**
+     * @param maritalStatus the maritalStatus to set
+     */
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    /**
+     * @return the birthPlace
+     */
+    public String getBirthPlace() {
+        return birthPlace;
+    }
+
+    /**
+     * @param birthPlace the birthPlace to set
+     */
+    public void setBirthPlace(String birthPlace) {
+        this.birthPlace = birthPlace;
     }
     
 }

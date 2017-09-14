@@ -5,7 +5,6 @@
  */
 package gov.nist.healthcare.cda.model.jdbc;
 
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -98,6 +97,8 @@ public class DatabaseConnection {
     public static final String PATIENT_DEMOGRAPHICS_RACE_CODE_2 = "RaceCode2";
     public static final String PATIENT_DEMOGRAPHICS_ETHNIC_GROUP = "EthnicGroup";
     public static final String PATIENT_DEMOGRAPHICS_DEATH_TIME = "DeathTime";
+    public static final String PATIENT_DEMOGRAPHICS_MARITAL_STATUS = "MaritalStatus";
+    public static final String PATIENT_DEMOGRAPHICS_BIRTH_PLACE = "BirthPlace";
     
     public static final String VITAL_RECORDS_DEATH_REPORT_NAME = "VitalRecordsDeathReport";
     public static final String VITAL_RECORDS_DEATH_REPORT_DOCUMENT_TYPE = "DocType";
