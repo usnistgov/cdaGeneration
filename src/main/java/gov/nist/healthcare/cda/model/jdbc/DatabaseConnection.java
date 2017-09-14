@@ -71,8 +71,14 @@ public class DatabaseConnection {
     public static final String ETHNICITY_ID = "EthnicityID";
     public static final String ETHNICITY_ETHNICITY = "Ethnicity";
     
+    public static final String METHOD_OF_DISPOSITION_NAME = "MethodOfDisposition";
+    public static final String METHOD_OF_DISPOSITION_ID = "MethodOfDispositionID";
+    public static final String METHOD_OF_DISPOSITION_METHOD_OF_DISPOSITION = "MethodOfDisposition";
     
-    
+    public static final String DEATH_REGISTRATION_NAME = "DeathRegistration";
+    public static final String DEATH_REGISTRATION_ID = "DeathRegistrationID";
+    public static final String DEATH_REGISTRATION_TIMESTAMP = "Timestamp";
+   
     public static final String NAME_NAME = "Name";
     public static final String NAME_ID = "NameID";        
     public static final String NAME_LAST_NAME = "LastName";
@@ -94,6 +100,7 @@ public class DatabaseConnection {
     public static final String PATIENT_DEMOGRAPHICS_DEATH_TIME = "DeathTime";
     
     public static final String VITAL_RECORDS_DEATH_REPORT_NAME = "VitalRecordsDeathReport";
+    public static final String VITAL_RECORDS_DEATH_REPORT_DOCUMENT_TYPE = "DocType";
     public static final String VITAL_RECORDS_DEATH_REPORT_VITAL_RECORDS_DEATH_REPORT_ID = "VitalRecordsDeathReportID";
     public static final String VITAL_RECORDS_DEATH_REPORT_AUTOPSY_DETAILS_ID = "AutopsyDetailsID";
     public static final String VITAL_RECORDS_DEATH_REPORT_CAUSE_OF_DEATH_ID = "CauseOfDeathID";

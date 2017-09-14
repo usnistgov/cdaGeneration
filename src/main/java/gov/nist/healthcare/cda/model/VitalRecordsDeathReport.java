@@ -50,6 +50,8 @@ public class VitalRecordsDeathReport {
     private DeathAdministration deathAdministration = null;
     private DeathCertification deathCertificate = null;
     private DeathEvent deathEvent = null;
+    private DeathRegistration deathRegistration = null;
+    private MethodOfDisposition methodOfDisposition = null;
 
     /**
      * @return the patientDemographics
@@ -149,6 +151,25 @@ public class VitalRecordsDeathReport {
         this.deathEvent = deathEvent;
     }
 
+    public static DocumentType convertDocumentType(int docType) {
+
+        switch (docType) {
+            case 1:
+                return DocumentType.CODED_CAUSE_OF_DEATH;
+            case 2:
+                return DocumentType.CODED_RACE_AND_ETHNICITY;
+            case 3:
+                return DocumentType.JURISDICTIONAL_DEATH_INFORMATION;
+            case 4:
+                return DocumentType.PROVIDER_DEATH_REGISTRATION;
+            case 5:
+                return DocumentType.VOID_DEATH_CERTIFICATE;
+            default:
+                return DocumentType.CODED_CAUSE_OF_DEATH;
+        }
+
+    }
+
     public static VitalRecordsDeathReport getVRDRById(String id) throws SQLException {
         VitalRecordsDeathReport vrdr = new VitalRecordsDeathReport();
 
@@ -161,6 +182,7 @@ public class VitalRecordsDeathReport {
         ResultSet result = db.executeQuery(sql.toString());
 
         if (result.next()) {
+            int documentType = result.getInt(DatabaseConnection.VITAL_RECORDS_DEATH_REPORT_DOCUMENT_TYPE);
             String patientDemographicsID = result.getString(DatabaseConnection.PATIENT_DEMOGRAPHICS_ID);
             String autopsyDetailsID = result.getString(DatabaseConnection.AUTOPSY_DETAILS_ID);
             String causeOfDeathID = result.getString(DatabaseConnection.CAUSE_OF_DEATH_ID);
@@ -168,6 +190,8 @@ public class VitalRecordsDeathReport {
             String deathAdministrationID = result.getString(DatabaseConnection.DEATH_ADMINISTRATION_ID);
             String deathCertificateID = result.getString(DatabaseConnection.DEATH_CERTIFICATE_ID);
             String deathEventID = result.getString(DatabaseConnection.DEATH_EVENT_ID);
+            String deathRegistrationID = result.getString(DatabaseConnection.DEATH_REGISTRATION_ID);
+            String methodOfDispositionID = result.getString(DatabaseConnection.METHOD_OF_DISPOSITION_ID);
 
             PatientDemographics pd = PatientDemographics.getPatientDemographicsById(patientDemographicsID);
             AutopsyDetails ad = AutopsyDetails.getAutopsyDetailsById(autopsyDetailsID);
@@ -176,7 +200,10 @@ public class VitalRecordsDeathReport {
             DeathAdministration da = DeathAdministration.getDeathAdministrationById(deathAdministrationID);
             DeathCertification dc = DeathCertification.getDeathCertificateById(deathCertificateID);
             DeathEvent de = DeathEvent.getDeathEventById(deathEventID);
+            DeathRegistration dr = DeathRegistration.getDeathRegistrationById(deathRegistrationID);
+            MethodOfDisposition mod = MethodOfDisposition.getMethodOfDispositionById(methodOfDispositionID);
 
+            vrdr.setDocumentType(VitalRecordsDeathReport.convertDocumentType(documentType));
             vrdr.setPatientDemographics(pd);
             vrdr.setAutopsyDetails(ad);
             vrdr.setCauseOfDeath(cod);
@@ -184,6 +211,8 @@ public class VitalRecordsDeathReport {
             vrdr.setDeathAdministration(da);
             vrdr.setDeathCertificate(dc);
             vrdr.setDeathEvent(de);
+            vrdr.setDeathRegistration(dr);
+            vrdr.setMethodOfDisposition(mod);
         }
 
         return vrdr;
@@ -203,12 +232,20 @@ public class VitalRecordsDeathReport {
                 templateID.setExtension("2016-12-01");
                 break;
             case CODED_RACE_AND_ETHNICITY:
+                templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.4");
+                templateID.setExtension("2016-12-01");
                 break;
             case JURISDICTIONAL_DEATH_INFORMATION:
+                templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.2");
+                templateID.setExtension("2016-12-01");
                 break;
             case PROVIDER_DEATH_REGISTRATION:
+                templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.1");
+                templateID.setExtension("2016-12-01");
                 break;
             case VOID_DEATH_CERTIFICATE:
+                templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.5");
+                templateID.setExtension("2016-12-01");
                 break;
             default:
                 templateID.setRoot("2.16.840.1.113883.10.20.26.1.1.3");
@@ -274,6 +311,18 @@ public class VitalRecordsDeathReport {
             DeathEvent.populateDeathEventSection(deathEventSection, vrdr.getDeathEvent());
         }
 
+        if (vrdr.getDeathRegistration() != null) {
+            POCDMT000040Component3 deathRegistrationComponent = structuredBody.addNewComponent();
+            POCDMT000040Section deathRegistrationSection = deathRegistrationComponent.addNewSection();
+            DeathRegistration.populateDeathRegistrationSection(deathRegistrationSection, vrdr.getDeathRegistration());
+        }
+
+        if (vrdr.getMethodOfDisposition() != null) {
+            POCDMT000040Component3 methodOfDispositionComponent = structuredBody.addNewComponent();
+            POCDMT000040Section methodOfDispositionSection = methodOfDispositionComponent.addNewSection();
+            MethodOfDisposition.populateMethodOfDispositionSection(methodOfDispositionSection, vrdr.getMethodOfDisposition());
+        }
+
         return cda;
     }
 
@@ -323,6 +372,34 @@ public class VitalRecordsDeathReport {
      */
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
+    }
+
+    /**
+     * @return the deathRegistration
+     */
+    public DeathRegistration getDeathRegistration() {
+        return deathRegistration;
+    }
+
+    /**
+     * @param deathRegistration the deathRegistration to set
+     */
+    public void setDeathRegistration(DeathRegistration deathRegistration) {
+        this.deathRegistration = deathRegistration;
+    }
+
+    /**
+     * @return the methodOfDisposition
+     */
+    public MethodOfDisposition getMethodOfDisposition() {
+        return methodOfDisposition;
+    }
+
+    /**
+     * @param methodOfDisposition the methodOfDisposition to set
+     */
+    public void setMethodOfDisposition(MethodOfDisposition methodOfDisposition) {
+        this.methodOfDisposition = methodOfDisposition;
     }
 
 }
