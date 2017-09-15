@@ -303,14 +303,14 @@ public class VitalRecordsDeathReport {
         if (vrdr.getDeathAdministration() != null && vrdr.getAutopsyDetails() != null && vrdr.getDeathCertificate() != null && vrdr.getCoronerReferral() != null) {
             POCDMT000040Component3 deathAdministrationComponent = structuredBody.addNewComponent();
             POCDMT000040Section deathAdministrationSection = deathAdministrationComponent.addNewSection();
-            DeathAdministration.populateDeathAdministrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral());
+            DeathAdministration.populateDeathAdministrationSection(deathAdministrationSection, vrdr.getDeathAdministration(), vrdr.getAutopsyDetails(), vrdr.getDeathCertificate(), vrdr.getCoronerReferral(), vrdr.getDeathRegistration(), vrdr.getMethodOfDisposition());
         }
         if (vrdr.getDeathEvent() != null) {
             POCDMT000040Component3 deathEventComponent = structuredBody.addNewComponent();
             POCDMT000040Section deathEventSection = deathEventComponent.addNewSection();
             DeathEvent.populateDeathEventSection(deathEventSection, vrdr.getDeathEvent());
         }
-
+/*
         if (vrdr.getDeathRegistration() != null) {
             POCDMT000040Component3 deathRegistrationComponent = structuredBody.addNewComponent();
             POCDMT000040Section deathRegistrationSection = deathRegistrationComponent.addNewSection();
@@ -322,7 +322,7 @@ public class VitalRecordsDeathReport {
             POCDMT000040Section methodOfDispositionSection = methodOfDispositionComponent.addNewSection();
             MethodOfDisposition.populateMethodOfDispositionSection(methodOfDispositionSection, vrdr.getMethodOfDisposition());
         }
-
+*/
         return cda;
     }
 
@@ -344,7 +344,7 @@ public class VitalRecordsDeathReport {
 
     public static void main(String[] args) throws SQLException {
 
-        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
+        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR4");
 
         System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();

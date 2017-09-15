@@ -66,9 +66,9 @@ public class DeathAdministration {
 
         return da;
     }
- 
-    public static POCDMT000040Section populateDeathAdministrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc, CoronerReferral cr) {
-        
+
+    public static POCDMT000040Section populateDeathAdministrationSection(POCDMT000040Section section, DeathAdministration da, AutopsyDetails ad, DeathCertification dc, CoronerReferral cr, DeathRegistration dr, MethodOfDisposition mod) {
+
         II templateIdSection = section.addNewTemplateId();
         templateIdSection.setRoot("2.16.840.1.113883.10.20.26.1.2.3");
         templateIdSection.setExtension("2016-12-01");
@@ -84,30 +84,46 @@ public class DeathAdministration {
 
         StrucDocText text = section.addNewText();
         text.newCursor().setTextValue("He's dead, Jim.");
-        
-        POCDMT000040Entry deathPronouncementEntry = section.addNewEntry();
-        POCDMT000040Act deathPronouncementAct = deathPronouncementEntry.addNewAct();
-        DeathAdministration.populateDeathPronouncementAct(deathPronouncementAct, da);
 
-        POCDMT000040Entry autopsyDetailsEntry = section.addNewEntry();
-        POCDMT000040Procedure autopsyDetailsProcedure = autopsyDetailsEntry.addNewProcedure();
-        AutopsyDetails.populateProcedure(autopsyDetailsProcedure, ad);
+        if (da != null) {
+            POCDMT000040Entry deathPronouncementEntry = section.addNewEntry();
+            POCDMT000040Act deathPronouncementAct = deathPronouncementEntry.addNewAct();
+            DeathAdministration.populateDeathPronouncementAct(deathPronouncementAct, da);
+        }
+        if (ad != null) {
+            POCDMT000040Entry autopsyDetailsEntry = section.addNewEntry();
+            POCDMT000040Procedure autopsyDetailsProcedure = autopsyDetailsEntry.addNewProcedure();
+            AutopsyDetails.populateProcedure(autopsyDetailsProcedure, ad);
+        }
+        if (dc != null) {
+            POCDMT000040Entry deathCertificationEntry = section.addNewEntry();
+            POCDMT000040Act deathCertificationAct = deathCertificationEntry.addNewAct();
+            DeathCertification.populateDeathCertificationAct(deathCertificationAct, dc);
+        }
+        if (da != null || cr != null) {
+            POCDMT000040Entry coronerCaseTransferEntry = section.addNewEntry();
+            POCDMT000040Act coronerCaseTransferAct = coronerCaseTransferEntry.addNewAct();
+            DeathAdministration.populatecoronerCaseTransferAct(coronerCaseTransferAct, da, cr);
+        }
+        if (dr != null) {
+            POCDMT000040Entry deathRegistrationEntry = section.addNewEntry();
+            POCDMT000040Act deathRegistrationAct = deathRegistrationEntry.addNewAct();
+            DeathRegistration.populateDeathRegistrationAct(deathRegistrationAct, dr);
+        }
         
-        POCDMT000040Entry deathCertificationEntry = section.addNewEntry();
-        POCDMT000040Act deathCertificationAct = deathCertificationEntry.addNewAct();
-        DeathCertification.populateDeathCertificationAct(deathCertificationAct, dc);
-        
-        POCDMT000040Entry coronerCaseTransferEntry = section.addNewEntry();
-        POCDMT000040Act coronerCaseTransferAct = coronerCaseTransferEntry.addNewAct();
-        DeathAdministration.populatecoronerCaseTransferAct(coronerCaseTransferAct, da, cr);
+        if(mod != null) {
+            POCDMT000040Entry methodOfDispositionEntry = section.addNewEntry();
+            POCDMT000040Observation methodOfDispositionObservation = methodOfDispositionEntry.addNewObservation();
+            MethodOfDisposition.populateMethodOfDisposistionObservation(methodOfDispositionObservation, mod);
+        }
         
         
         return section;
-        
+
     }
 
     private static POCDMT000040Act populateDeathPronouncementAct(POCDMT000040Act act, DeathAdministration da) {
-        
+
         act.setClassCode(XActClassDocumentEntryAct.ACT);
         act.setMoodCode(XDocumentActMood.EVN);
         act.addNewId();
@@ -118,29 +134,29 @@ public class DeathAdministration {
         II templateId2 = act.addNewTemplateId();
         templateId2.setRoot("2.16.840.1.113883.10.20.22.4.12");
         templateId2.setExtension("2014-06-09");
-             
+
         CD code = act.addNewCode();
         //TODO This looks like a mistake. This is a SNOMED CT code
         code.setCode("446661000124101");
         code.setCodeSystem("2.16.840.1.113883.6.1");
         code.setCodeSystemName("LOINC");
         code.setDisplayName("Death pronouncement");
-        
+
         CS statusCode = act.addNewStatusCode();
         statusCode.setCode("completed");
-        
+
         IVLTS effectiveTime = act.addNewEffectiveTime();
         effectiveTime.setValue(da.getDateTimePronouncedDead());
-        
+
         return act;
-                
+
     }
 
     private static POCDMT000040Act populatecoronerCaseTransferAct(POCDMT000040Act act, DeathAdministration da, CoronerReferral cr) {
 
         act.setClassCode(XActClassDocumentEntryAct.ACT);
         act.setMoodCode(XDocumentActMood.EVN);
-        
+
         II templateId = act.addNewTemplateId();
         templateId.setRoot("2.16.840.1.113883.10.20.26.1.4");
         templateId.setExtension("2016-12-01");
@@ -151,17 +167,15 @@ public class DeathAdministration {
         code.setCodeSystemName("LOINC");
         code.setDisplayName("Medical examiner or coroner was contacted");
 
-        if(cr != null) {            
+        if (cr != null) {
             POCDMT000040EntryRelationship entryRelationship = act.addNewEntryRelationship();
             entryRelationship.setTypeCode(XActRelationshipEntryRelationship.COMP);
             POCDMT000040Observation observation = entryRelationship.addNewObservation();
-            CoronerReferral.populateCoronerReferralObservation(observation, cr);                       
+            CoronerReferral.populateCoronerReferralObservation(observation, cr);
         }
-        
+
         return act;
-        
+
     }
 
-    
-    
 }

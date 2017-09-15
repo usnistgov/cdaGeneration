@@ -62,7 +62,7 @@ public class DeathRegistration {
         }
         return dr;
     }
-
+/*
     public static POCDMT000040Section populateDeathRegistrationSection(POCDMT000040Section section, DeathRegistration dr) {
 
         II templateIdSection = section.addNewTemplateId();
@@ -88,10 +88,10 @@ public class DeathRegistration {
         return section;
 
     }
-
+*/
     public static POCDMT000040Act populateDeathRegistrationAct(POCDMT000040Act act, DeathRegistration dr) {
 
-        act.setClassCode(XActClassDocumentEntryAct.ACT);
+        act.setClassCode(XActClassDocumentEntryAct.REG);
         act.setMoodCode(XDocumentActMood.EVN);
 
         II templateId = act.addNewTemplateId();
@@ -99,7 +99,7 @@ public class DeathRegistration {
         templateId.setExtension("2016-12-01");
 
         CD code = act.addNewCode();
-        code.setCode(" 307928008");
+        code.setCode("307928008");
         code.setCodeSystem("2.16.840.1.113883.6.96");
         code.setCodeSystemName("SNOMED-CT");
         code.setDisplayName("\"Death administrative procedure");

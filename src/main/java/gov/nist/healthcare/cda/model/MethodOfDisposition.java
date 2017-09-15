@@ -49,7 +49,7 @@ public class MethodOfDisposition {
         }
         return mod;
     }
-
+/*
      public static POCDMT000040Section populateMethodOfDispositionSection(POCDMT000040Section section, MethodOfDisposition mod) {
         
         II templateIdSection = section.addNewTemplateId();
@@ -75,7 +75,7 @@ public class MethodOfDisposition {
         return section;
         
     }
-
+*/
      
     public static POCDMT000040Observation populateMethodOfDisposistionObservation(POCDMT000040Observation observation, MethodOfDisposition mod) {
         

@@ -78,6 +78,16 @@ public class DatabaseConnection {
     public static final String DEATH_REGISTRATION_ID = "DeathRegistrationID";
     public static final String DEATH_REGISTRATION_TIMESTAMP = "Timestamp";
    
+    public static final String DECEDENT_DEMOGRAPHICS_NAME = "DecedentDemographics";
+    public static final String DECEDENT_DEMOGRAPHICS_ID = "DecedentDemographicsID";
+    public static final String DECEDENT_DEMOGRAPHICS_AGE_AT_DEATH = "AgeAtDeath";
+    public static final String DECEDENT_DEMOGRAPHICS_BIRTH_CERTIFICATE_ID = "BirthCertificateId";
+    public static final String DECEDENT_DEMOGRAPHICS_BIRTH_CERTIFICATE_DATA_YEAR = "BirthCertificateDataYear";
+    public static final String DECEDENT_DEMOGRAPHICS_EDUCATION_LEVEL = "EducationLevel";
+    public static final String DECEDENT_DEMOGRAPHICS_MARITAL_STATUS = "MaritalStatus";    
+    public static final String DECEDENT_DEMOGRAPHICS_OCCUPATION = "Occupation";
+    public static final String DECEDENT_DEMOGRAPHICS_SEX = "Sex";
+        
     public static final String NAME_NAME = "Name";
     public static final String NAME_ID = "NameID";        
     public static final String NAME_LAST_NAME = "LastName";
