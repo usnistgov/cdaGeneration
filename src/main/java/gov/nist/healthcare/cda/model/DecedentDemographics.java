@@ -32,7 +32,6 @@ import java.sql.SQLException;
  */
 public class DecedentDemographics {
 
-
     private String ageAtDeath = null;
     private String birthCertificateId = null;
     private String birthCertificateDataYear = null;
@@ -210,6 +209,7 @@ public class DecedentDemographics {
         POCDMT000040Observation sexObservation = sexEntry.addNewObservation();
         DecedentDemographics.populateSexObservation(sexObservation, dd.getSex());
 
+        return section;
     }
 
     public static POCDMT000040Observation populateAgeAtDeathObservation(POCDMT000040Observation observation, String ageAtDeath) {
@@ -231,6 +231,8 @@ public class DecedentDemographics {
         code.setCodeSystemName("SNOMED-CT");
         code.setDisplayName("Age At Onset");
 
+        observation.addNewStatusCode().setCode("completed");
+        
         PQ value = PQ.Factory.newInstance();
         value.setValue("65");
         value.setUnit("a");
@@ -238,6 +240,8 @@ public class DecedentDemographics {
         observation.setValueArray(0, value);
 
         POCDMT000040EntryRelationship ageEditEntryRelationship = observation.addNewEntryRelationship();
+        ageEditEntryRelationship.setTypeCode(XActRelationshipEntryRelationship.SUBJ);
+        ageEditEntryRelationship.setInversionInd(true);
         POCDMT000040Observation ageEditObservation = ageEditEntryRelationship.addNewObservation();
 
         ageEditObservation.setClassCode("OBS");
@@ -259,7 +263,7 @@ public class DecedentDemographics {
         ageEditValue.setCodeSystemName("PHIN VS (CDC Local Coding System)");
         ageEditValue.setDisplayName("Edit Passed");
         ageEditObservation.addNewValue();
-        ageEditObservation.setValueArray(0, value);
+        ageEditObservation.setValueArray(0, ageEditValue);
 
         return observation;
 
@@ -340,7 +344,7 @@ public class DecedentDemographics {
 
     private static POCDMT000040Observation populateMaritalStatusObservation(POCDMT000040Observation observation, String maritalStatus) {
     
-                observation.setClassCode("OBS");
+        observation.setClassCode("OBS");
         observation.setMoodCode(XActMoodDocumentObservation.EVN);
 
         II templateId1 = observation.addNewTemplateId();
@@ -364,6 +368,88 @@ public class DecedentDemographics {
         return observation;
         
     }
+    private static POCDMT000040Observation populateOccupationObservation(POCDMT000040Observation observation, String occupation) {
+        observation.setClassCode("OBS");
+        observation.setMoodCode(XActMoodDocumentObservation.EVN);
 
+        II templateId1 = observation.addNewTemplateId();
+        templateId1.setRoot("2.16.840.1.113883.10.20.26.1.3.38");
+        templateId1.setExtension("2016-12-01");
+
+        CD code = observation.addNewCode();
+        code.setCode("21843-8");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("History of usual occuptation");
+        
+        
+        CD value = CD.Factory.newInstance();
+        value.setCode(occupation);
+        value.setCodeSystem("2.16.840.1.114222.4.5.314");
+        value.setCodeSystemName("Occupation CDC Census");
+        observation.addNewValue();
+        observation.setValueArray(0, value);
+        
+        POCDMT000040EntryRelationship industryER = observation.addNewEntryRelationship();
+        industryER.setTypeCode(XActRelationshipEntryRelationship.COMP);
+        POCDMT000040Observation industryObservation = industryER.addNewObservation();
+        
+        industryObservation.setClassCode("OBS");
+        industryObservation.setMoodCode(XActMoodDocumentObservation.EVN);
+
+        II templateId2 = industryObservation.addNewTemplateId();
+        templateId2.setRoot("2.16.840.1.113883.10.20.26.1.3.39");
+        templateId2.setExtension("2016-12-01");
+
+        CD code2 = industryObservation.addNewCode();
+        code2.setCode("21844-6");
+        code2.setCodeSystem("2.16.840.1.113883.6.1");
+        code2.setCodeSystemName("LOINC");
+        code2.setDisplayName("\"History of usual industry");
+        
+        CD value2 = CD.Factory.newInstance();
+        // TODO: Placeholder
+        value2.setCode("PLACEHOLDER");
+        value2.setCodeSystem("2.16.840.1.114222.4.5.315");
+        value2.setCodeSystemName("\"Industry CDC Census 2010");        
+        industryObservation.addNewValue();
+        industryObservation.setValueArray(0, value2);
+        
+        return observation;
+        
+        
+    }
+
+    
+    private static POCDMT000040Observation populateSexObservation(POCDMT000040Observation observation, String sex) {
+    
+        
+        observation.setClassCode("OBS");
+        observation.setMoodCode(XActMoodDocumentObservation.EVN);
+
+        II templateId1 = observation.addNewTemplateId();
+        templateId1.setRoot("2.16.840.1.113883.10.20.26.1.3.48");
+        templateId1.setExtension("2016-12-01");
+
+        CD code = observation.addNewCode();
+        code.setCode("PHC1432");
+        code.setCodeSystem("2.16.840.1.114222.4.5.274");
+        code.setCodeSystemName("PHIN VS (CDC Local Coding System)");
+        code.setDisplayName("Sex Edit Flag");
+        
+        CD value = CD.Factory.newInstance();
+        value.setCode("PHC1362");
+        value.setCodeSystem("2.16.840.1.114222.4.5.274");
+        value.setCodeSystemName("PHIN VS (CDC Local Coding System)");
+        value.setDisplayName("Edit Passed");
+        observation.addNewValue();
+        observation.setValueArray(0, value);
+    
+        return observation;
+        
+    }
+   
+
+    
     
 }

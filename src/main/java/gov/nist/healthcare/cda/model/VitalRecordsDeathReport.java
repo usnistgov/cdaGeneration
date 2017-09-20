@@ -52,7 +52,9 @@ public class VitalRecordsDeathReport {
     private DeathEvent deathEvent = null;
     private DeathRegistration deathRegistration = null;
     private MethodOfDisposition methodOfDisposition = null;
-
+    private DecedentDemographics decedentDemographics = null;
+    
+    
     /**
      * @return the patientDemographics
      */
@@ -192,17 +194,19 @@ public class VitalRecordsDeathReport {
             String deathEventID = result.getString(DatabaseConnection.DEATH_EVENT_ID);
             String deathRegistrationID = result.getString(DatabaseConnection.DEATH_REGISTRATION_ID);
             String methodOfDispositionID = result.getString(DatabaseConnection.METHOD_OF_DISPOSITION_ID);
-
+            String decedentDemographicsID = result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_ID);
+                    
             PatientDemographics pd = PatientDemographics.getPatientDemographicsById(patientDemographicsID);
             AutopsyDetails ad = AutopsyDetails.getAutopsyDetailsById(autopsyDetailsID);
-            CauseOfDeath cod = CauseOfDeath.getCauseOfDeathById(causeOfDeathID);
+            CauseOfDeath cod = CauseOfDeath.getCodedCauseOfDeathById(causeOfDeathID);
             CoronerReferral cr = CoronerReferral.getCoronerReferralById(coronerReferralID);
             DeathAdministration da = DeathAdministration.getDeathAdministrationById(deathAdministrationID);
             DeathCertification dc = DeathCertification.getDeathCertificateById(deathCertificateID);
             DeathEvent de = DeathEvent.getDeathEventById(deathEventID);
             DeathRegistration dr = DeathRegistration.getDeathRegistrationById(deathRegistrationID);
             MethodOfDisposition mod = MethodOfDisposition.getMethodOfDispositionById(methodOfDispositionID);
-
+            DecedentDemographics dd = DecedentDemographics.getDecedentDemographicsById(decedentDemographicsID);
+            
             vrdr.setDocumentType(VitalRecordsDeathReport.convertDocumentType(documentType));
             vrdr.setPatientDemographics(pd);
             vrdr.setAutopsyDetails(ad);
@@ -213,6 +217,7 @@ public class VitalRecordsDeathReport {
             vrdr.setDeathEvent(de);
             vrdr.setDeathRegistration(dr);
             vrdr.setMethodOfDisposition(mod);
+            vrdr.setDecedentDemographics(dd);
         }
 
         return vrdr;
@@ -297,7 +302,11 @@ public class VitalRecordsDeathReport {
         if (vrdr.getCauseOfDeath() != null) {
             POCDMT000040Component3 causeOfDeathComponent = structuredBody.addNewComponent();
             POCDMT000040Section causeOfDeathSection = causeOfDeathComponent.addNewSection();
-            CauseOfDeath.populateCauseOfDeathSection(causeOfDeathSection, vrdr.getCauseOfDeath());
+            if (vrdr.getDocumentType() == VitalRecordsDeathReport.DocumentType.CODED_CAUSE_OF_DEATH) {
+                CauseOfDeath.populateCodedCauseOfDeathSection(causeOfDeathSection, vrdr.getCauseOfDeath());
+            } else {
+                CauseOfDeath.populateCauseOfDeathSection(causeOfDeathSection, vrdr.getCauseOfDeath());
+            }
         }
 
         if (vrdr.getDeathAdministration() != null && vrdr.getAutopsyDetails() != null && vrdr.getDeathCertificate() != null && vrdr.getCoronerReferral() != null) {
@@ -310,7 +319,12 @@ public class VitalRecordsDeathReport {
             POCDMT000040Section deathEventSection = deathEventComponent.addNewSection();
             DeathEvent.populateDeathEventSection(deathEventSection, vrdr.getDeathEvent());
         }
-/*
+        if(vrdr.getDecedentDemographics() != null) {
+            POCDMT000040Component3 decedentDemographicsComponent = structuredBody.addNewComponent();
+            POCDMT000040Section decedentDemographicsSection = decedentDemographicsComponent.addNewSection();
+            DecedentDemographics.populateDecedentDemographicsSection(decedentDemographicsSection, vrdr.getDecedentDemographics());           
+        }
+        /*
         if (vrdr.getDeathRegistration() != null) {
             POCDMT000040Component3 deathRegistrationComponent = structuredBody.addNewComponent();
             POCDMT000040Section deathRegistrationSection = deathRegistrationComponent.addNewSection();
@@ -322,7 +336,7 @@ public class VitalRecordsDeathReport {
             POCDMT000040Section methodOfDispositionSection = methodOfDispositionComponent.addNewSection();
             MethodOfDisposition.populateMethodOfDispositionSection(methodOfDispositionSection, vrdr.getMethodOfDisposition());
         }
-*/
+         */
         return cda;
     }
 
@@ -344,7 +358,7 @@ public class VitalRecordsDeathReport {
 
     public static void main(String[] args) throws SQLException {
 
-        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR4");
+        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
 
         System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();
@@ -400,6 +414,20 @@ public class VitalRecordsDeathReport {
      */
     public void setMethodOfDisposition(MethodOfDisposition methodOfDisposition) {
         this.methodOfDisposition = methodOfDisposition;
+    }
+
+    /**
+     * @return the decedentDemographics
+     */
+    public DecedentDemographics getDecedentDemographics() {
+        return decedentDemographics;
+    }
+
+    /**
+     * @param decedentDemographics the decedentDemographics to set
+     */
+    public void setDecedentDemographics(DecedentDemographics decedentDemographics) {
+        this.decedentDemographics = decedentDemographics;
     }
 
 }

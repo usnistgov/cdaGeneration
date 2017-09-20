@@ -9,6 +9,7 @@ import gov.nist.healthcare.cda.model.jdbc.DatabaseConnection;
 import hl7OrgV3.CD;
 import hl7OrgV3.CE;
 import hl7OrgV3.CS;
+import hl7OrgV3.ED;
 import hl7OrgV3.II;
 import hl7OrgV3.INT;
 import hl7OrgV3.POCDMT000040Component4;
@@ -31,7 +32,7 @@ import java.sql.SQLException;
  * @author mccaffrey
  */
 public class CauseOfDeath {
-
+   
     private String causeOfDeath = null;
     private String diseaseOnsetToDeathInterval = null;
     private String tobaccoUse = null;
@@ -93,7 +94,7 @@ public class CauseOfDeath {
         this.injuryInvolvedInDeath = injuryInvolvedInDeath;
     }
 
-    public static CauseOfDeath getCauseOfDeathById(String id) throws SQLException {
+    public static CauseOfDeath getCodedCauseOfDeathById(String id) throws SQLException {
         CauseOfDeath cod = new CauseOfDeath();
 
         DatabaseConnection db = new DatabaseConnection();
@@ -117,6 +118,60 @@ public class CauseOfDeath {
     }
 
     public static POCDMT000040Section populateCauseOfDeathSection(POCDMT000040Section section, CauseOfDeath cod) {
+        
+        
+        II templateIdSection = section.addNewTemplateId();
+        templateIdSection.setRoot("2.16.840.1.113883.10.20.26.1.2.4");
+        templateIdSection.setExtension("2016-12-01");
+
+        CE code = section.addNewCode();
+        code.setCode("11450-4");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("Problem list");
+
+        ST title = section.addNewTitle();
+        title.newCursor().setTextValue("Cause Of Death Section");
+
+        StrucDocText text = section.addNewText();
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>");
+        sb.append("<thead>");
+        sb.append("<tr><th>Cause Of Death</th></tr>");
+        sb.append("<tr><th>Disease Onset To Death Interval</th></tr>");
+        sb.append("<tr><th>Injury Involved In Death</th></tr>");        
+        sb.append("<tr><th>Tobacco Use Contributed to Death</th></tr>");
+        sb.append("</thead>");
+        sb.append("<tr>" + cod.getCauseOfDeath() + " </td></tr>");
+        sb.append("<tr>" + cod.getDiseaseOnsetToDeathInterval() + " </td></tr>");
+        sb.append("<tr>" + cod.getInjuryInvolvedInDeath() + " </td></tr>");
+        sb.append("<tr>" + cod.getTobaccoUse() + " </td></tr>");
+        sb.append("</tbody>");
+        sb.append("</table>");
+        text.newCursor().setTextValue(sb.toString());
+
+        
+        POCDMT000040Entry causalInformationEntry = section.addNewEntry();
+        POCDMT000040Organizer causalInformationOrganizer = causalInformationEntry.addNewOrganizer();
+        CauseOfDeath.populateDeathCausalInformationOrganizer(causalInformationOrganizer, cod);
+
+        POCDMT000040Entry injuryEntry = section.addNewEntry();
+        POCDMT000040Organizer injuryOrganizer = injuryEntry.addNewOrganizer();
+        CauseOfDeath.populateInjuryOrganizer(injuryOrganizer, cod);
+                
+        POCDMT000040Entry pregnancyStatusEntry = section.addNewEntry();
+        POCDMT000040Observation pregnancyStatusObservation = pregnancyStatusEntry.addNewObservation();
+        CauseOfDeath.populatePregnancyStatusObservation(pregnancyStatusObservation, cod);
+
+        POCDMT000040Entry tobaccoUseEntry = section.addNewEntry();
+        POCDMT000040Observation tobaccoUseObservation = tobaccoUseEntry.addNewObservation();
+        CauseOfDeath.populateTobaccoUseObservation(tobaccoUseObservation, cod);
+
+        return section;
+    }
+    
+    public static POCDMT000040Section populateCodedCauseOfDeathSection(POCDMT000040Section section, CauseOfDeath cod) {
 
         II templateIdSection = section.addNewTemplateId();
         templateIdSection.setRoot("2.16.840.1.113883.10.20.26.1.2.5");
@@ -151,7 +206,7 @@ public class CauseOfDeath {
 
         POCDMT000040Entry causalInformationEntry = section.addNewEntry();
         POCDMT000040Organizer causalInformationOrganizer = causalInformationEntry.addNewOrganizer();
-        CauseOfDeath.populateCausalInformationOrganizer(causalInformationOrganizer, cod);
+        CauseOfDeath.populateCodedDeathCausalInformationOrganizer(causalInformationOrganizer, cod);
 
         POCDMT000040Entry injuryEntry = section.addNewEntry();
         POCDMT000040Organizer injuryOrganizer = injuryEntry.addNewOrganizer();
@@ -173,7 +228,32 @@ public class CauseOfDeath {
         
     }
 
-    private static POCDMT000040Organizer populateCausalInformationOrganizer(POCDMT000040Organizer organizer, CauseOfDeath cod) {
+    private static void populateDeathCausalInformationOrganizer(POCDMT000040Organizer organizer, CauseOfDeath cod) {
+        
+        organizer.setClassCode(XActClassDocumentEntryOrganizer.CLUSTER);
+        organizer.setMoodCode("EVN");
+
+        II templateId = organizer.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.6");
+        templateId.setExtension("2016-12-01");
+    
+        CS statusCode = organizer.addNewStatusCode();
+        statusCode.setCode("completed");
+
+        POCDMT000040Component4 causeOfDeathTextComponent = organizer.addNewComponent();
+        causeOfDeathTextComponent.addNewSequenceNumber().setValue(BigInteger.ONE);
+        causeOfDeathTextComponent.addNewSeperatableInd().setValue(false);
+        POCDMT000040Observation causeOfDeathTextObservation = causeOfDeathTextComponent.addNewObservation();
+        CauseOfDeath.populateCauseOfDeathTextObservation(causeOfDeathTextObservation, cod);
+        
+        
+        
+        
+        
+    }
+
+    
+    private static POCDMT000040Organizer populateCodedDeathCausalInformationOrganizer(POCDMT000040Organizer organizer, CauseOfDeath cod) {
 
         organizer.setClassCode(XActClassDocumentEntryOrganizer.CLUSTER);
         organizer.setMoodCode("EVN");
@@ -460,6 +540,61 @@ public class CauseOfDeath {
         observation.addNewValue();
         observation.setValueArray(0, value);
                 
+        return observation;
+    }
+
+    private static POCDMT000040Observation populateCauseOfDeathTextObservation(POCDMT000040Observation observation, CauseOfDeath cod) {
+       
+        
+        observation.setClassCode("OBS");
+        observation.setMoodCode(XActMoodDocumentObservation.EVN);
+
+        II templateId = observation.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.16");
+        templateId.setExtension("2016-12-01");
+
+        CD code = observation.addNewCode();
+        code.setCode("69543-9");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("Cause Of Death (US Standard Certificate of Death)");
+        
+        ED value = ED.Factory.newInstance();        
+        value.newCursor().setTextValue(cod.getCauseOfDeath());
+        observation.addNewValue();
+        observation.setValueArray(0, value);
+        
+        POCDMT000040EntryRelationship deathIntervalER = observation.addNewEntryRelationship();
+        deathIntervalER.setTypeCode(XActRelationshipEntryRelationship.COMP);
+        POCDMT000040Observation deathIntervalObservation = deathIntervalER.addNewObservation();
+        CauseOfDeath.populateDeathIntervalObservation(deathIntervalObservation, cod);
+        
+        return observation;
+    }
+   
+    
+    private static POCDMT000040Observation populateDeathIntervalObservation(POCDMT000040Observation observation, CauseOfDeath cod) {
+        
+        
+        
+        observation.setClassCode("OBS");
+        observation.setMoodCode(XActMoodDocumentObservation.EVN);
+
+        II templateId = observation.addNewTemplateId();
+        templateId.setRoot("2.16.840.1.113883.10.20.26.1.3.18");
+        templateId.setExtension("2016-12-01");
+
+        CD code = observation.addNewCode();
+        code.setCode("69440-6");
+        code.setCodeSystem("2.16.840.1.113883.6.1");
+        code.setCodeSystemName("LOINC");
+        code.setDisplayName("Disease onset to death interval");
+        
+        ED value = ED.Factory.newInstance();        
+        value.newCursor().setTextValue(cod.getDiseaseOnsetToDeathInterval());
+        observation.addNewValue();
+        observation.setValueArray(0, value);
+      
         return observation;
     }
 
