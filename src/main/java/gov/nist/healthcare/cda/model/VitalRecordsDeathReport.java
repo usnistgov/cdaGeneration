@@ -25,6 +25,8 @@ import hl7OrgV3.POCDMT000040StructuredBody;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.xmlbeans.XmlOptions;
 
@@ -225,11 +227,14 @@ public class VitalRecordsDeathReport {
 
     public static ClinicalDocumentDocument1 populateClinicalDocument(ClinicalDocumentDocument1 cda, VitalRecordsDeathReport vrdr) {
 
-        POCDMT000040ClinicalDocument1 clinicalDocument = cda.addNewClinicalDocument();
+        POCDMT000040ClinicalDocument1 clinicalDocument = cda.addNewClinicalDocument();        
         clinicalDocument.addNewRealmCode().setCode("US");
         POCDMT000040InfrastructureRootTypeId typeId = clinicalDocument.addNewTypeId();
         typeId.setRoot("2.16.840.1.113883.1.3");
         typeId.setExtension("POCD_HD000040");
+        II templateIDCoD = clinicalDocument.addNewTemplateId();
+        templateIDCoD.setRoot("2.16.840.1.113883.10.20.26.1");
+        templateIDCoD.setExtension("2016-12-01");
         II templateID = clinicalDocument.addNewTemplateId();
         switch (vrdr.getDocumentType()) {
             case CODED_CAUSE_OF_DEATH:
@@ -350,7 +355,11 @@ public class VitalRecordsDeathReport {
         XmlOptions options = new XmlOptions();
         options.setCharacterEncoding("UTF-8");
         options.setSavePrettyPrint();
-
+        options.setUseDefaultNamespace();
+        Map suggestedPrefixes = new HashMap();
+        
+        options.setSaveSuggestedPrefixes(suggestedPrefixes);
+        
         //System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         //System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
         return cda.xmlText(options).replace("type=\"urn:", "type=\"");
@@ -360,15 +369,15 @@ public class VitalRecordsDeathReport {
 
         VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
 
-        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+//        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();
         VitalRecordsDeathReport.populateClinicalDocument(cda, vrdr);
 
         XmlOptions options = new XmlOptions();
         options.setCharacterEncoding("UTF-8");
         options.setSavePrettyPrint();
-
-        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
+        options.setUseDefaultNamespace();
+//        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
 
         System.out.println(cda.xmlText(options).replace("type=\"urn:", "type=\""));
 

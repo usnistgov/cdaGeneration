@@ -151,13 +151,13 @@ public class DecedentDemographics {
         ResultSet result = db.executeQuery(sql.toString());
 
         if (result.next()) {
-            dd.setAgeAtDeath(DatabaseConnection.DECEDENT_DEMOGRAPHICS_AGE_AT_DEATH);
-            dd.setBirthCertificateId(DatabaseConnection.DECEDENT_DEMOGRAPHICS_BIRTH_CERTIFICATE_ID);
-            dd.setBirthCertificateDataYear(DatabaseConnection.DECEDENT_DEMOGRAPHICS_BIRTH_CERTIFICATE_DATA_YEAR);
-            dd.setEducationLevel(DatabaseConnection.DECEDENT_DEMOGRAPHICS_EDUCATION_LEVEL);
-            dd.setMaritalStatus(DatabaseConnection.DECEDENT_DEMOGRAPHICS_MARITAL_STATUS);
-            dd.setOccupation(DatabaseConnection.DECEDENT_DEMOGRAPHICS_OCCUPATION);
-            dd.setSex(DatabaseConnection.DECEDENT_DEMOGRAPHICS_SEX);
+            dd.setAgeAtDeath(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_AGE_AT_DEATH));
+            dd.setBirthCertificateId(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_BIRTH_CERTIFICATE_ID));
+            dd.setBirthCertificateDataYear(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_BIRTH_CERTIFICATE_DATA_YEAR));
+            dd.setEducationLevel(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_EDUCATION_LEVEL));
+            dd.setMaritalStatus(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_MARITAL_STATUS));
+            dd.setOccupation(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_OCCUPATION));
+            dd.setSex(result.getString(DatabaseConnection.DECEDENT_DEMOGRAPHICS_SEX));
 
         } else {
             return null;
@@ -190,7 +190,7 @@ public class DecedentDemographics {
         DecedentDemographics.populateAgeAtDeathObservation(ageAtDeathObservation, dd.getAgeAtDeath());
 
         POCDMT000040Entry birthCertificateEntry = section.addNewEntry();
-        POCDMT000040Act birthCertificateAct = birthCertificateEntry.addNewAct();
+        POCDMT000040Act birthCertificateAct = birthCertificateEntry.addNewAct();        
         DecedentDemographics.populateBirthCertificateAct(birthCertificateAct, dd.getBirthCertificateId(), dd.getBirthCertificateDataYear());
 
         POCDMT000040Entry educationLevelEntry = section.addNewEntry();
@@ -276,9 +276,8 @@ public class DecedentDemographics {
 
         II templateId1 = act.addNewTemplateId();
         templateId1.setRoot("2.16.840.1.113883.10.20.26.1.3.45");
-        templateId1.setExtension("2016-12-01");
-
-        act.addNewId().setRoot(birthCertificateId);
+        templateId1.setExtension("2016-12-01");        
+        act.addNewId().setExtension(birthCertificateId);                        
         CD code = act.addNewCode();
         code.setCode("444561001");
         code.setCodeSystem("2.16.840.1.113883.6.96");
