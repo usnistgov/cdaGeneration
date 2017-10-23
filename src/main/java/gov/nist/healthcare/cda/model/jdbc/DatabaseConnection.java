@@ -120,6 +120,11 @@ public class DatabaseConnection {
     public static final String VITAL_RECORDS_DEATH_REPORT_DEATH_CERTIFICATE = "DeathCertificateID";
     public static final String VITAL_RECORDS_DEATH_REPORT_DEATH_EVENT_ID= "DeathEventID";
     
+    public static final String EXISTENCE_CHECK_NAME = "ExistenceCheck";
+    public static final String EXISTENCE_CHECK_EXISTENCE_CHECK_ID = "ExistenceCheckID";
+    public static final String EXISTENCE_CHECK_XPATH = "XPath";
+    public static final String EXISTENCE_CHECK_MESSAGE = "Message";
+                        
     private static Connection con;
     private static Statement stmt;
     private boolean successfulConnection = false;
