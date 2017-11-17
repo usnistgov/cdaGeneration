@@ -367,7 +367,7 @@ public class VitalRecordsDeathReport {
 
     public static void main(String[] args) throws SQLException {
 
-        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR1");
+        VitalRecordsDeathReport vrdr = VitalRecordsDeathReport.getVRDRById("VRDR3");
 
 //        System.out.println(vrdr.getCauseOfDeath().getCauseOfDeath());
         ClinicalDocumentDocument1 cda = ClinicalDocumentDocument1.Factory.newInstance();

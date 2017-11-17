@@ -37,6 +37,7 @@ public class CauseOfDeath {
     private String diseaseOnsetToDeathInterval = null;
     private String tobaccoUse = null;
     private String injuryInvolvedInDeath = null;
+    private String surgeryAssociatedWithDeath = null;
 
     /**
      * @return the causeOfDeath
@@ -110,6 +111,7 @@ public class CauseOfDeath {
             cod.setDiseaseOnsetToDeathInterval(result.getString(DatabaseConnection.CAUSE_OF_DEATH_DISEASE_ONSET_TO_DEATH_INTERVAL));
             cod.setInjuryInvolvedInDeath(result.getString(DatabaseConnection.CAUSE_OF_DEATH_INJURY_INVOLVED_IN_DEATH));
             cod.setTobaccoUse(result.getString(DatabaseConnection.CAUSE_OF_DEATH_TOBACCO_USE));
+        //    cod.setSurgeryAssociatedWithDeath(result.getString(DatabaseConnection.CAUSE_OF_DEATH_SURGERY_ASSOCIATED_WITH_DEATH));
         } else {
             return null;
         }
@@ -139,18 +141,17 @@ public class CauseOfDeath {
         sb.append("<table>");
         sb.append("<thead>");
         sb.append("<tr><th>Cause Of Death</th></tr>");
-        sb.append("<tr><th>Disease Onset To Death Interval</th></tr>");
+        sb.append("<tr><th>Surgery Associated With Death</th></tr>");
         sb.append("<tr><th>Injury Involved In Death</th></tr>");        
         sb.append("<tr><th>Tobacco Use Contributed to Death</th></tr>");
         sb.append("</thead>");
         sb.append("<tr>" + cod.getCauseOfDeath() + " </td></tr>");
-        sb.append("<tr>" + cod.getDiseaseOnsetToDeathInterval() + " </td></tr>");
+        sb.append("<tr>" + cod.getSurgeryAssociatedWithDeath() + " </td></tr>");
         sb.append("<tr>" + cod.getInjuryInvolvedInDeath() + " </td></tr>");
         sb.append("<tr>" + cod.getTobaccoUse() + " </td></tr>");
         sb.append("</tbody>");
         sb.append("</table>");
-        text.newCursor().setTextValue(sb.toString());
-
+        text.newCursor().setTextValue(sb.toString());       
         
         POCDMT000040Entry causalInformationEntry = section.addNewEntry();
         POCDMT000040Organizer causalInformationOrganizer = causalInformationEntry.addNewOrganizer();
@@ -596,6 +597,20 @@ public class CauseOfDeath {
         observation.setValueArray(0, value);
       
         return observation;
+    }
+
+    /**
+     * @return the surgeryAssociatedWithDeath
+     */
+    public String getSurgeryAssociatedWithDeath() {
+        return surgeryAssociatedWithDeath;
+    }
+
+    /**
+     * @param surgeryAssociatedWithDeath the surgeryAssociatedWithDeath to set
+     */
+    public void setSurgeryAssociatedWithDeath(String surgeryAssociatedWithDeath) {
+        this.surgeryAssociatedWithDeath = surgeryAssociatedWithDeath;
     }
 
     

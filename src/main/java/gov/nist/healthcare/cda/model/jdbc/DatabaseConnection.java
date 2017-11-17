@@ -43,6 +43,7 @@ public class DatabaseConnection {
     public static final String CAUSE_OF_DEATH_DISEASE_ONSET_TO_DEATH_INTERVAL = "DiseaseOnsetToDeathInterval";
     public static final String CAUSE_OF_DEATH_TOBACCO_USE = "TobaccoUse";
     public static final String CAUSE_OF_DEATH_INJURY_INVOLVED_IN_DEATH = "InjuryInvolvedInDeath";
+    public static final String CAUSE_OF_DEATH_SURGERY_ASSOCIATED_WITH_DEATH = "SurgeryAssociatedWithDeath";
     
     public static final String CORONER_REFERRAL_NAME = "CoronerReferral";
     public static final String CORONER_REFERRAL_ID = "CoronerReferralID";
